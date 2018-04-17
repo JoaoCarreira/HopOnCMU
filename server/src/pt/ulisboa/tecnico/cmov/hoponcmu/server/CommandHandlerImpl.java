@@ -15,6 +15,7 @@ public class CommandHandlerImpl implements CommandHandler {
 	private String resposta = null;
 	String login="login";
 	String create_account="create_account";
+	String logout="logout";
 	
 	//@Override
 	public Response handle(SendCommand hc) {
@@ -29,6 +30,11 @@ public class CommandHandlerImpl implements CommandHandler {
 		if(recebido.get(0).equals(create_account)){
 			recebido.remove(0);
 			create_account(recebido);
+		}
+		
+		if(recebido.get(0).equals(logout)){
+			recebido.remove(0);
+			logout(recebido);
 		}
 		
 		System.out.println(users);
@@ -61,14 +67,14 @@ public class CommandHandlerImpl implements CommandHandler {
 		else{
 			for(int i=0;i<users.size();i++){
 				ArrayList<String> utilizador= users.get(i);
-				if(user.get(0)==utilizador.get(0)){
+				if(user.get(0).equals(utilizador.get(0))){
 					success = false;
 				}
 			}
 			
 			for(int i=0;i<users.size();i++){
 				ArrayList<String> utilizador= users.get(i);
-				if(user.get(1)==utilizador.get(1)){
+				if(user.get(1).equals(utilizador.get(1))){
 					success = false;
 				}
 			}
@@ -78,6 +84,21 @@ public class CommandHandlerImpl implements CommandHandler {
 				resposta="Create_Account_Success";
 			}
 		}
+		return resposta;
+	}
+	
+	public String logout(ArrayList<String> user){
+		
+		resposta="Logout_Failed";
+		
+		for(int i=0;i<users.size();i++){
+			ArrayList<String> utilizador=users.get(i);
+			System.out.println(utilizador.get(0));
+			if(user.get(0).equals(utilizador.get(0))){
+				resposta="Logout_Success";
+			}
+		}
+
 		return resposta;
 	}
 }

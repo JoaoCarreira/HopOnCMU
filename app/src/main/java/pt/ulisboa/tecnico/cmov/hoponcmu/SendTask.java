@@ -19,7 +19,7 @@ public class SendTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String[] params) {
         Socket server = null;
-        String reply = null;
+        String reply;
 
         SendCommand option = new SendCommand(params);
 
@@ -37,7 +37,7 @@ public class SendTask extends AsyncTask<String, Void, String> {
 
             oos.close();
             ois.close();
-            Log.d("DummyClient", reply);
+            Log.d("Resposta", reply);
         }
         catch (Exception e) {
             Log.d("Client", "Without connection..." + e.getMessage());

@@ -13,6 +13,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private String result=null;
     private String success="Create_Account_Success";
+    private String unsuccess="Create_Account_Failed";
     private String connection="Without connection";
 
     @Override
@@ -27,6 +28,9 @@ public class RegisterActivity extends AppCompatActivity {
                 EditText password = findViewById(R.id.password_register);
                 String username_str= username.getText().toString();
                 String password_str= password.getText().toString();
+
+                TextView text_connection = findViewById(R.id.connection_text_create);
+                text_connection.setText("");
 
                 SendTask tarefa= new SendTask();
                 tarefa.execute("create_account",username_str,password_str).toString();
@@ -51,6 +55,11 @@ public class RegisterActivity extends AppCompatActivity {
         if(text.equals(success)){
             Intent intent = new Intent(RegisterActivity.this, LogInActivity.class);
             startActivity(intent);
+        }
+
+        if(text.equals(unsuccess)){
+            TextView text_connection = findViewById(R.id.connection_text_create);
+            text_connection.setText("Invalid Parameters");
         }
 
         if(text.equals(connection)){

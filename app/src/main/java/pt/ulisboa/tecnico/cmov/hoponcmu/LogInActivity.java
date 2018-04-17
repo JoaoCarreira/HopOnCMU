@@ -13,7 +13,9 @@ public class LogInActivity extends AppCompatActivity {
 
     private String result=null;
     private String success="Login_Success";
+    private String unsuccess="Login_Failed";
     private String connection="Without connection";
+    private static String session=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +42,16 @@ public class LogInActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-               /* if(result.equals(success)){
-                    Intent intent = new Intent(LogInActivity.this, .class);
+                if(result.equals(success)){
+                    setSession(username_str);
+                    Intent intent = new Intent(LogInActivity.this, ListActivity.class);
                     startActivity(intent);
-                }*/
+                }
+
+                if(result.equals(unsuccess)){
+                    TextView text_connection = findViewById(R.id.connection_text);
+                    text_connection.setText("Invalid parameters");
+                }
 
                 if(result.equals(connection)){
                     TextView text_connection = findViewById(R.id.connection_text);
@@ -63,5 +71,16 @@ public class LogInActivity extends AppCompatActivity {
 
 
     }
+
+    public static String getUser(){
+        return session;
+    }
+
+    public String setSession(String id){
+        this.session=id;
+        return session;
+    }
+
+
 
 }
