@@ -29,8 +29,8 @@ public class ListActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        ListView lista = (ListView)findViewById(R.id.lista);
-        CustomAdapter customAdapter = new CustomAdapter();
+        final ListView lista = (ListView)findViewById(R.id.lista);
+        final CustomAdapter customAdapter = new CustomAdapter();
         lista.setAdapter(customAdapter);
         final Intent quizIntent = new Intent(this,MainActivity.class);
 
@@ -40,6 +40,12 @@ public class ListActivity extends AppCompatActivity implements BottomNavigationV
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String item= listaMonumentos[position];
+
+                Bundle bundle = new Bundle();
+                bundle.putString("monumento",item);
+                quizIntent.putExtras(bundle);
+
                 startActivity(quizIntent);
             }
         });

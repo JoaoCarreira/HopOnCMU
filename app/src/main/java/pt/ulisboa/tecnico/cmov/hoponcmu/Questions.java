@@ -15,6 +15,18 @@ public class Questions {
     };
     public String mCorrect[]={ "Resposta1.1","Resposta2.2","Resposta3.3","Resposta4.4"};
 
+    public void setQuestions(String[] questions){
+        this.mQuestions=questions;
+    }
+
+    public void setChoices(String[][] choices){
+        this.mChoices=choices;
+    }
+
+    public void setmCorrect(String[] correct){
+        this.mCorrect=correct;
+    }
+
     public String getQuestion(int a){
         String Question = mQuestions[a];
         return Question;

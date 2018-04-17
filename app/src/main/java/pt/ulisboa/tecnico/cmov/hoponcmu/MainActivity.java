@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +28,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent Mintent = getIntent();
+        Bundle bundle = Mintent.getExtras();
+        String monument = bundle.getString("monumento");
+
+        SendTask questions = new SendTask();
+        questions.execute("criar_questao",monument);
+
+        try {
+            String result=questions.get();
+
+            //Log.d("Done", result);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
         r = new Random();
 

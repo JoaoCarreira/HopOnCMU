@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.cmov.hoponcmu.command.CommandHandler;
 import pt.ulisboa.tecnico.cmov.hoponcmu.command.SendCommand;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponse;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
+import pt.ulisboa.tecnico.cmov.hoponcmu.Questions;
 
 public class CommandHandlerImpl implements CommandHandler {
 	
@@ -16,6 +17,7 @@ public class CommandHandlerImpl implements CommandHandler {
 	String login="login";
 	String create_account="create_account";
 	String logout="logout";
+	String questao="criar_questao";
 	
 	//@Override
 	public Response handle(SendCommand hc) {
@@ -35,6 +37,11 @@ public class CommandHandlerImpl implements CommandHandler {
 		if(recebido.get(0).equals(logout)){
 			recebido.remove(0);
 			logout(recebido);
+		}
+		
+		if(recebido.get(0).equals(questao)){
+			recebido.remove(0);
+			create_question(recebido);
 		}
 		
 		System.out.println(users);
@@ -100,5 +107,11 @@ public class CommandHandlerImpl implements CommandHandler {
 		}
 
 		return resposta;
+	}
+	
+	public Questions create_question(ArrayList<String> monument){
+		
+		Questions questions = new Questions(monument.get(0));
+		return questions;
 	}
 }
