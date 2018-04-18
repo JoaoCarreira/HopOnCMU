@@ -16,7 +16,7 @@ public class SendCommand implements Command {
 		}
 	}
 	
-	//@Override
+	@Override
 	public Response handle(CommandHandler chi) {
 		return chi.handle(this);
 	}

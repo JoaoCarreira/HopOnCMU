@@ -1,15 +1,15 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.concurrent.ExecutionException;
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseRegister;
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends AllActivity {
 
     private String result=null;
     private String success="Create_Account_Success";
@@ -32,19 +32,8 @@ public class RegisterActivity extends AppCompatActivity {
                 TextView text_connection = findViewById(R.id.connection_text_create);
                 text_connection.setText("");
 
-                SendTask tarefa= new SendTask();
-                tarefa.execute("create_account",username_str,password_str).toString();
-
-                try {
-                    result=tarefa.get();
-                    //Log.d("Feito", resultado);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-
-                validate(result);
+                SendTask tarefa= new SendTask(RegisterActivity.this);
+                tarefa.execute("create_account",username_str,password_str);
 
             }
         });
@@ -67,5 +56,13 @@ public class RegisterActivity extends AppCompatActivity {
             text_connection.setText(result);
         }
 
+    }
+
+    @Override
+    public void updateInterface(Response rsp) {
+        if (rsp.getClass().equals(HelloResponseRegister.class)) {
+            HelloResponseRegister hello = (HelloResponseRegister) rsp;
+            validate(hello.getMessage());
+        }
     }
 }

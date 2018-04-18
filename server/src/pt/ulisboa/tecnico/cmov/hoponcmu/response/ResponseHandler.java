@@ -1,5 +1,5 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu.response;
 
 public interface ResponseHandler {
-	public void handle(HelloResponse hr);
+	public void handle(HelloResponseLogin hr);
 }

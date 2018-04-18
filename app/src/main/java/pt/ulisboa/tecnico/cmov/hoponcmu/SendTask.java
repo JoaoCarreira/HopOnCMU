@@ -8,19 +8,21 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import pt.ulisboa.tecnico.cmov.hoponcmu.command.SendCommand;
-import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponse;
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 
-public class SendTask extends AsyncTask<String, Void, String> {
+public class SendTask extends AsyncTask<String, Void, Response> {
 
-    public SendTask() {
+    AllActivity activity;
 
+    public SendTask(AllActivity activity) {
+        this.activity=activity;
     }
 
     @Override
-    protected String doInBackground(String[] params) {
+    protected Response doInBackground(String[] params) {
         Socket server = null;
-        String reply;
-
+        //String reply;
+        Response response=null;
         SendCommand option = new SendCommand(params);
 
         try {
@@ -32,24 +34,30 @@ public class SendTask extends AsyncTask<String, Void, String> {
             Log.d("Cliente", "enviou");
 
             ObjectInputStream ois = new ObjectInputStream(server.getInputStream());
-            HelloResponse hr = (HelloResponse) ois.readObject();
-            reply = hr.getMessage();
+            response = (Response) ois.readObject();
 
             oos.close();
             ois.close();
-            Log.d("Resposta", reply);
+            //Log.d("Resposta", reply);
         }
         catch (Exception e) {
             Log.d("Client", "Without connection..." + e.getMessage());
             e.printStackTrace();
-            reply="Without connection";
+            //reply="Without connection";
         } finally {
             if (server != null) {
                 try { server.close(); }
                 catch (Exception e) { }
             }
         }
-        return reply;
+        return response;
+    }
+
+    //@Override
+    protected void onPostExecute(Response o) {
+        if (o != null) {
+            activity.updateInterface(o);
+        }
     }
 
 }

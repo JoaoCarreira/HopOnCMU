@@ -1,17 +1,16 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.concurrent.ExecutionException;
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseLogin;
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 
-public class LogInActivity extends AppCompatActivity {
+public class LogInActivity extends AllActivity {
 
-    private String result=null;
     private String success="Login_Success";
     private String unsuccess="Login_Failed";
     private String connection="Without connection";
@@ -30,33 +29,8 @@ public class LogInActivity extends AppCompatActivity {
                 String username_str= username.getText().toString();
                 String password_str= password.getText().toString();
 
-                SendTask task= new SendTask();
-                task.execute("login",username_str,password_str).toString();
-
-                try {
-                    result=task.get();
-                    //Log.d("Done", result);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-
-                if(result.equals(success)){
-                    setSession(username_str);
-                    Intent intent = new Intent(LogInActivity.this, ListActivity.class);
-                    startActivity(intent);
-                }
-
-                if(result.equals(unsuccess)){
-                    TextView text_connection = findViewById(R.id.connection_text);
-                    text_connection.setText("Invalid parameters");
-                }
-
-                if(result.equals(connection)){
-                    TextView text_connection = findViewById(R.id.connection_text);
-                    text_connection.setText(result);
-                }
+                SendTask task= new SendTask(LogInActivity.this);
+                task.execute("login",username_str,password_str);
 
             }
         });
@@ -82,5 +56,31 @@ public class LogInActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void updateInterface(Response rsp) {
+        if (rsp.getClass().equals(HelloResponseLogin.class)) {
+            HelloResponseLogin hello = (HelloResponseLogin) rsp;
+            evaluate(hello.getMessage());
+        }
+    }
 
+    public void evaluate(String result){
+
+        if(result.equals(success)){
+           // setSession(username_str);
+            Intent intent = new Intent(LogInActivity.this, ListActivity.class);
+            startActivity(intent);
+        }
+
+        if(result.equals(unsuccess)){
+            TextView text_connection = findViewById(R.id.connection_text);
+            text_connection.setText("Invalid parameters");
+        }
+
+        if(result.equals(connection)){
+            TextView text_connection = findViewById(R.id.connection_text);
+            text_connection.setText(result);
+        }
+
+    }
 }

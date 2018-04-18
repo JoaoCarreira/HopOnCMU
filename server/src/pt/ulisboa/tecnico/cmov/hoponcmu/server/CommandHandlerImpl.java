@@ -5,15 +5,18 @@ import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.hoponcmu.command.CommandHandler;
 import pt.ulisboa.tecnico.cmov.hoponcmu.command.SendCommand;
-import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponse;
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseLogin;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 import pt.ulisboa.tecnico.cmov.hoponcmu.Questions;
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseQuestion;
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseRegister;
 
 public class CommandHandlerImpl implements CommandHandler {
 	
 	private List<ArrayList<String>> users= new ArrayList<ArrayList<String>>();
 	
 	private String resposta = null;
+	private Questions question;
 	String login="login";
 	String create_account="create_account";
 	String logout="logout";
@@ -27,25 +30,27 @@ public class CommandHandlerImpl implements CommandHandler {
 		if(recebido.get(0).equals(login)){
 			recebido.remove(0);
 			login(recebido);
+			return new HelloResponseLogin(resposta);
 		}
 		
 		if(recebido.get(0).equals(create_account)){
 			recebido.remove(0);
 			create_account(recebido);
+			return new HelloResponseRegister(resposta);
 		}
 		
 		if(recebido.get(0).equals(logout)){
 			recebido.remove(0);
 			logout(recebido);
+			return new HelloResponseLogin(resposta);
 		}
 		
 		if(recebido.get(0).equals(questao)){
 			recebido.remove(0);
 			create_question(recebido);
+			return new HelloResponseQuestion(question);
 		}
-		
-		System.out.println(users);
-		return new HelloResponse(resposta);
+		return null;
 	}
 	
 	public String login(ArrayList<String> user){
@@ -111,7 +116,8 @@ public class CommandHandlerImpl implements CommandHandler {
 	
 	public Questions create_question(ArrayList<String> monument){
 		
-		Questions questions = new Questions(monument.get(0));
-		return questions;
+		question = new Questions(monument.get(0));
+		
+		return question;
 	}
 }

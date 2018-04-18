@@ -12,17 +12,20 @@ import android.widget.TextView;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity {
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseQuestion;
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
+
+public class MainActivity extends AllActivity {
 
     Button resposta1 , resposta2 , resposta3 , resposta4;
     TextView score , pergunta;
 
     Random r;
 
-    private Questions mQuestions = new Questions() ;
+    private Questions questions_receive;
     private String mAnswer;
     private int mScore = 0;
-    private int numeroPerguntas= mQuestions.mQuestions.length;
+    private int numeroPerguntas= questions_receive.mQuestions.length;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,18 +36,8 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = Mintent.getExtras();
         String monument = bundle.getString("monumento");
 
-        SendTask questions = new SendTask();
+        SendTask questions = new SendTask(MainActivity.this);
         questions.execute("criar_questao",monument);
-
-        try {
-            String result=questions.get();
-
-            //Log.d("Done", result);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
 
         r = new Random();
 
@@ -124,14 +117,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateQuestion(int a) {
-        pergunta.setText(mQuestions.getQuestion(a));
-        resposta1.setText(mQuestions.getChoice1(a));
-        resposta2.setText(mQuestions.getChoice2(a));
-        resposta3.setText(mQuestions.getChoice3(a));
-        resposta4.setText(mQuestions.getChoice4(a));
+        pergunta.setText(questions_receive.getQuestion(a));
+        resposta1.setText(questions_receive.getChoice1(a));
+        resposta2.setText(questions_receive.getChoice2(a));
+        resposta3.setText(questions_receive.getChoice3(a));
+        resposta4.setText(questions_receive.getChoice4(a));
 
-        mAnswer = mQuestions.getCorrect(a);
+        mAnswer = questions_receive.getCorrect(a);
     }
 
+    @Override
+    public void updateInterface(Response rsp) {
+        if (rsp.getClass().equals(HelloResponseQuestion.class)) {
+            HelloResponseQuestion hello = (HelloResponseQuestion) rsp;
+            questions_receive=hello.getMessage();
+        }
+    }
 }
 
