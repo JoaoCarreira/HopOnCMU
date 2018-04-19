@@ -64,12 +64,12 @@ public class ListActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.lista:
                 startActivity(quizIntent);
                 break;
-            case R.id.logout:
+            /*case R.id.logout:
                 String username=LogInActivity.getUser();
                 Log.d("LogOut", username);
                 logoutMethod(username);
                 startActivity(logoutIntent);
-                break;
+                break;*/
         }
 
         return true;
@@ -103,9 +103,9 @@ public class ListActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
-    public static void logoutMethod(String username){
+    /*public static void logoutMethod(String username){
 
         SendTask task= new SendTask();
         task.execute("logout",username);
-    }
+    }*/
 }

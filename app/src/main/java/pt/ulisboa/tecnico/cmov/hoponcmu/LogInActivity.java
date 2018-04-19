@@ -15,6 +15,8 @@ public class LogInActivity extends AllActivity {
     private String unsuccess="Login_Failed";
     private String connection="Without connection";
     private static String session=null;
+    private String username_str;
+    private String password_str;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +28,8 @@ public class LogInActivity extends AllActivity {
             public void onClick(View v) {
                 EditText username = findViewById(R.id.username_login);
                 EditText password = findViewById(R.id.password_login);
-                String username_str= username.getText().toString();
-                String password_str= password.getText().toString();
+                username_str= username.getText().toString();
+                password_str= password.getText().toString();
 
                 SendTask task= new SendTask(LogInActivity.this);
                 task.execute("login",username_str,password_str);
@@ -67,7 +69,7 @@ public class LogInActivity extends AllActivity {
     public void evaluate(String result){
 
         if(result.equals(success)){
-           // setSession(username_str);
+            setSession(username_str);
             Intent intent = new Intent(LogInActivity.this, ListActivity.class);
             startActivity(intent);
         }

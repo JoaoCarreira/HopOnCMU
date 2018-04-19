@@ -14,12 +14,18 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class RankActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+import java.util.ArrayList;
+import java.util.List;
+
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseRank;
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
+
+public class RankActivity extends AllActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     BottomNavigationView bottomNavigationView;
 
-    String[] users ={"Joao","Roberto","Panisca","Carlos","Antonio","Zedu"};
-    String[] scores ={"1233","324","343","34","6543","43"};
+    private ArrayList<String> users =new ArrayList<String>();
+    private ArrayList<String> scores =new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +35,9 @@ public class RankActivity extends AppCompatActivity implements BottomNavigationV
         bottomNavigationView=(BottomNavigationView) findViewById(R.id.navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
-        ListView lista = (ListView)findViewById(R.id.lista);
-        CustomAdapter customAdapter = new CustomAdapter();
-        lista.setAdapter(customAdapter);
+        SendTask task= new SendTask(RankActivity.this);
+        task.execute("get_rank");
+
     }
 
 
@@ -52,11 +58,11 @@ public class RankActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.lista:
                 startActivity(quizIntent);
                 break;
-            case R.id.logout:
+            /*case R.id.logout:
                 String username=LogInActivity.getUser();
                 ListActivity.logoutMethod(username);
                 startActivity(logoutIntent);
-                break;
+                break;*/
         }
 
         return true;
@@ -66,7 +72,7 @@ public class RankActivity extends AppCompatActivity implements BottomNavigationV
 
         @Override
         public int getCount() {
-            return users.length;
+            return users.size();
         }
 
         @Override
@@ -86,11 +92,30 @@ public class RankActivity extends AppCompatActivity implements BottomNavigationV
             TextView textView_user = (TextView)view.findViewById(R.id.user);
             TextView textView_score = (TextView)view.findViewById(R.id.score);
             int lugar = position+1;
-            textView_score.setText(scores[position]);
-            textView_user.setText(users[position]);
+            textView_score.setText(scores.get(position));
+            textView_user.setText(users.get(position));
             textView_rank.setText((""+ lugar));
 
             return view;
+        }
+    }
+
+    @Override
+    public void updateInterface(Response rsp) {
+        if (rsp.getClass().equals(HelloResponseRank.class)) {
+            HelloResponseRank hello = (HelloResponseRank) rsp;
+
+            List<ArrayList<String>> rank=hello.getMessage();
+
+            for(int i=0; i<rank.size();i++){
+
+                users.add(rank.get(i).get(0));
+                scores.add(rank.get(i).get(1));
+            }
+
+            ListView lista = (ListView)findViewById(R.id.lista);
+            CustomAdapter customAdapter = new CustomAdapter();
+            lista.setAdapter(customAdapter);
         }
     }
 }

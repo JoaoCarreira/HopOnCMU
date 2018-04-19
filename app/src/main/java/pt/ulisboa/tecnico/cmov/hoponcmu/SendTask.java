@@ -55,6 +55,7 @@ public class SendTask extends AsyncTask<String, Void, Response> {
 
     //@Override
     protected void onPostExecute(Response o) {
+
         if (o != null) {
             activity.updateInterface(o);
         }

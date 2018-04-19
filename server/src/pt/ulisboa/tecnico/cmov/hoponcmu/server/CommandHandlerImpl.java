@@ -9,18 +9,23 @@ import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseLogin;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 import pt.ulisboa.tecnico.cmov.hoponcmu.Questions;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseQuestion;
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseRank;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseRegister;
 
 public class CommandHandlerImpl implements CommandHandler {
 	
 	private List<ArrayList<String>> users= new ArrayList<ArrayList<String>>();
+	private List<ArrayList<String>> rank= new ArrayList<ArrayList<String>>();
 	
 	private String resposta = null;
 	private Questions question;
+
 	String login="login";
 	String create_account="create_account";
 	String logout="logout";
 	String questao="criar_questao";
+	String update_score="update_score";
+	String get_rank="get_rank";
 	
 	//@Override
 	public Response handle(SendCommand hc) {
@@ -50,6 +55,17 @@ public class CommandHandlerImpl implements CommandHandler {
 			create_question(recebido);
 			return new HelloResponseQuestion(question);
 		}
+		
+		if(recebido.get(0).equals(update_score)){
+			recebido.remove(0);
+			updateRank(recebido);
+		}
+		
+		if(recebido.get(0).equals(get_rank)){
+			recebido.remove(0);
+			return new HelloResponseRank(rank);
+		}
+		
 		return null;
 	}
 	
@@ -74,6 +90,10 @@ public class CommandHandlerImpl implements CommandHandler {
 		if(users.size()==0){
 			users.add(user);
 			resposta="Create_Account_Success";
+			ArrayList<String> aux= new ArrayList<String>();
+			aux.add(user.get(0));
+			aux.add(""+0);
+			rank.add(aux);
 		}
 		
 		else{
@@ -94,6 +114,10 @@ public class CommandHandlerImpl implements CommandHandler {
 			if(success==true){
 				users.add(user);
 				resposta="Create_Account_Success";
+				ArrayList<String> aux= new ArrayList<String>();
+				aux.add(user.get(0));
+				aux.add(""+0);
+				rank.add(aux);
 			}
 		}
 		return resposta;
@@ -117,7 +141,19 @@ public class CommandHandlerImpl implements CommandHandler {
 	public Questions create_question(ArrayList<String> monument){
 		
 		question = new Questions(monument.get(0));
-		
 		return question;
+	}
+	
+	public void updateRank(ArrayList<String> score){
+		
+		for(int i=0;i<rank.size();i++){
+			ArrayList<String> score_user=rank.get(i);
+			if(score_user.get(0).equals(score.get(1))){
+				int aux = Integer.parseInt(score_user.get(1));
+				int aux_score = Integer.parseInt(score.get(0));
+				int final_score=aux+aux_score;
+				score_user.set(1, ""+final_score);
+			}
+		}
 	}
 }

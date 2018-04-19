@@ -6,4 +6,6 @@
     <color name="Red">#FF0000</color>
     <color name="wl_gray">#c1c1c1</color>
     <color name="colorBottomNavigation">#000000</color>
+    <color name="Yellow">#FFEB3B</color>
+    <color name="Green">#00C853</color>
 </resources>

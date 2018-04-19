@@ -1,14 +1,19 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
-public class Questions {
-    public String mQuestions[] = {
+import java.io.Serializable;
+
+public class Questions implements Serializable{
+	 
+	private static final long serialVersionUID = 1L;
+	
+	public String mQuestions[] = {
             "Em que ano foi construído?",
             "Demorou quantos anos a ser contruído?",
             "Eu sou a pergunta nº3",
             "Eu sou a pergunta nº4",
         };
-    public String mChoices[][];
-    public String mCorrect[]={ "Resposta1.1","Resposta2.2","Resposta3.3","Resposta4.4"};
+	public String mChoices[][];
+	public String mCorrect[];
     
     public Questions(String monumento){
     	
@@ -21,7 +26,10 @@ public class Questions {
                     {"Resposta3.1","Resposta3.2","Resposta3.3","Resposta3.4"},
                     {"Resposta4.1","Resposta4.2","Resposta4.3","Resposta4.4"},
             };
+        	
+        	String correct[]={ "Resposta1.1","Resposta2.2","Resposta3.3","Resposta4.4"};
         	setChoices(answers);
+        	setCorrect(correct);
         	break;
         	
         case "Mosteiros dos Jeronimos":
@@ -44,7 +52,7 @@ public class Questions {
         this.mChoices=choices;
     }
 
-    public void setmCorrect(String[] correct){
+    public void setCorrect(String[] correct){
         this.mCorrect=correct;
     }
 

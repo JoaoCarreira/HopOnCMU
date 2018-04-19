@@ -1,31 +1,14 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
-public class Questions {
-    public String mQuestions[] = {
-            "Eu sou a pergunta nº1",
-            "Eu sou a pergunta nº2",
-            "Eu sou a pergunta nº3",
-            "Eu sou a pergunta nº4",
-        };
-    public String mChoices[][]={
-            {"Resposta1.1","Resposta1.2","Resposta1.3","Resposta1.4"},
-            {"Resposta2.1","Resposta2.2","Resposta2.3","Resposta2.4"},
-            {"Resposta3.1","Resposta3.2","Resposta3.3","Resposta3.4"},
-            {"Resposta4.1","Resposta4.2","Resposta4.3","Resposta4.4"},
-    };
-    public String mCorrect[]={ "Resposta1.1","Resposta2.2","Resposta3.3","Resposta4.4"};
+import java.io.Serializable;
 
-    public void setQuestions(String[] questions){
-        this.mQuestions=questions;
-    }
+public class Questions implements Serializable{
+    private static final long serialVersionUID = 1L;
 
-    public void setChoices(String[][] choices){
-        this.mChoices=choices;
-    }
+    public String mQuestions[];
+    public String mChoices[][];
+    public String mCorrect[];
 
-    public void setmCorrect(String[] correct){
-        this.mCorrect=correct;
-    }
 
     public String getQuestion(int a){
         String Question = mQuestions[a];
