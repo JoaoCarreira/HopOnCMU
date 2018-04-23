@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -11,9 +12,6 @@ import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 
 public class LogInActivity extends AllActivity {
 
-    private String success="Login_Success";
-    private String unsuccess="Login_Failed";
-    private String connection="Without connection";
     private static String session=null;
     private String username_str;
     private String password_str;
@@ -66,22 +64,34 @@ public class LogInActivity extends AllActivity {
         }
     }
 
+    @Override
+    public void updateConnection(String net){
+
+        String connection="Without connection";
+        if (net.equals("login")){
+            TextView text_connection = findViewById(R.id.connection_text);
+            text_connection.setText(connection);
+        }
+
+    }
+
     public void evaluate(String result){
+
+        String success="Login_Success";
+        String failure="Login_Failed";
+
+        TextView text_connection = findViewById(R.id.connection_text);
 
         if(result.equals(success)){
             setSession(username_str);
+            text_connection.setText("");
             Intent intent = new Intent(LogInActivity.this, ListActivity.class);
             startActivity(intent);
         }
 
-        if(result.equals(unsuccess)){
-            TextView text_connection = findViewById(R.id.connection_text);
-            text_connection.setText("Invalid parameters");
-        }
+        if(result.equals(failure)){
 
-        if(result.equals(connection)){
-            TextView text_connection = findViewById(R.id.connection_text);
-            text_connection.setText(result);
+            text_connection.setText("Invalid parameters");
         }
 
     }

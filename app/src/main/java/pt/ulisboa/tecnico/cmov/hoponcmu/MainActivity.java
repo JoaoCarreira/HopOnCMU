@@ -1,31 +1,29 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import java.util.Random;
-
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseQuestion;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 
-import static java.lang.Thread.sleep;
 
 public class MainActivity extends AllActivity {
 
     Button resposta1 , resposta2 , resposta3 , resposta4;
     TextView score , pergunta;
 
-    Random r;
 
     private Questions questions_receive;
     private String mAnswer;
     private int mScore = 0;
     int numeroPerguntas= 4;
     int numeroRespostas= 0;
+
+    Dialog mydialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +34,13 @@ public class MainActivity extends AllActivity {
         Bundle bundle = Mintent.getExtras();
         String monument = bundle.getString("monumento");
 
+
         SendTask questions = new SendTask(MainActivity.this);
         questions.execute("criar_questao",monument);
+
+        score = (TextView) findViewById(R.id.score);
+        score.setText("Score: " + mScore);
+
 
     }
 
@@ -61,22 +64,14 @@ public class MainActivity extends AllActivity {
                 @Override
 
                 public void onClick(View v) {
-                    sleepTime();
-                    resposta1.setBackgroundResource(R.color.Yellow);
-
-                    sleepTime();
 
                     if(resposta1.getText().toString().equals(mAnswer)){
-                        resposta1.setBackgroundResource(R.color.Green);
                         mScore ++ ;
                         score.setText("Score: " + mScore);
-                        sleepTime();
-                        updateQuestion(numeroRespostas);
+                        ShowPopUp(true);
                     }
                     else{
-                        resposta1.setBackgroundResource(R.color.Red);
-                        sleepTime();
-                        updateQuestion(numeroRespostas);
+                        ShowPopUp(false);
                     }
                 }
 
@@ -86,16 +81,12 @@ public class MainActivity extends AllActivity {
                 @Override
                 public void onClick(View v) {
                     if(resposta2.getText().toString().equals(mAnswer)){
-                        resposta2.setBackgroundResource(R.color.Green);
                         mScore ++ ;
                         score.setText("Score: " + mScore);
-                        sleepTime();
-                        updateQuestion(numeroRespostas);
+                        ShowPopUp(true);
                     }
                     else{
-                        resposta2.setBackgroundResource(R.color.Red);
-                        sleepTime();
-                        updateQuestion(numeroRespostas);
+                        ShowPopUp(false);
                     }
                 }
             });
@@ -103,16 +94,12 @@ public class MainActivity extends AllActivity {
                 @Override
                 public void onClick(View v) {
                     if(resposta3.getText().toString().equals(mAnswer)){
-                        resposta3.setBackgroundResource(R.color.Green);
                         mScore ++ ;
                         score.setText("Score: " + mScore);
-                        sleepTime();
-                        updateQuestion(numeroRespostas);
+                        ShowPopUp(true);
                     }
                     else{
-                        resposta3.setBackgroundResource(R.color.Red);
-                        sleepTime();
-                        updateQuestion(numeroRespostas);
+                        ShowPopUp(false);
                     }
                 }
             });
@@ -120,16 +107,13 @@ public class MainActivity extends AllActivity {
                 @Override
                 public void onClick(View v) {
                     if(resposta4.getText().toString().equals(mAnswer)){
-                        resposta4.setBackgroundResource(R.color.Green);
                         mScore ++ ;
                         score.setText("Score: " + mScore);
-                        sleepTime();
-                        updateQuestion(numeroRespostas);
+                        String aux="+ 1 Ponto";
+                        ShowPopUp(true);
                     }
                     else{
-                        resposta4.setBackgroundResource(R.color.Red);
-                        sleepTime();
-                        updateQuestion(numeroRespostas);
+                        ShowPopUp(false);
                     }
                 }
             });
@@ -139,6 +123,7 @@ public class MainActivity extends AllActivity {
     private void updateQuestion(int a) {
 
         if (a==numeroPerguntas){
+
 
             SendTask answers = new SendTask(MainActivity.this);
             answers.execute("update_score",""+mScore,LogInActivity.getUser());
@@ -150,10 +135,6 @@ public class MainActivity extends AllActivity {
 
         }
         else{
-            resposta1.setBackgroundResource(R.color.wl_gray);
-            resposta2.setBackgroundResource(R.color.wl_gray);
-            resposta3.setBackgroundResource(R.color.wl_gray);
-            resposta4.setBackgroundResource(R.color.wl_gray);
             pergunta.setText(questions_receive.getQuestion(a));
             resposta1.setText(questions_receive.getChoice1(a));
             resposta2.setText(questions_receive.getChoice2(a));
@@ -166,12 +147,49 @@ public class MainActivity extends AllActivity {
         }
     }
 
-    public void sleepTime (){
-        try {
-            sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void ShowPopUp(Boolean fin){
+
+        String points;
+        String resp;
+
+        mydialog=new Dialog(MainActivity.this);
+        mydialog.setContentView(R.layout.custompopup);
+
+        mydialog.show();
+
+        if (fin==true) {
+            points="+ 1 Ponto";
+            resp="Resposta Correta";
+            mydialog.getWindow().setBackgroundDrawableResource(R.color.Green);
         }
+
+        else{
+            resp="Resposta Errada";
+            points="Falta de sorte";
+            mydialog.getWindow().setBackgroundDrawableResource(R.color.Red);
+        }
+
+        TextView resposta_final = mydialog.findViewById(R.id.textView4);
+        resposta_final.setText(resp);
+
+        TextView scoreText = mydialog.findViewById(R.id.scorePopup);
+        scoreText.setText(points);
+
+        Button continuar = mydialog.findViewById(R.id.continue_button);
+
+        continuar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mydialog.dismiss();
+            }
+        });
+
+        updateQuestion(numeroRespostas);
+    }
+
+    @Override
+    public void updateConnection(String net){
+
     }
 }
 

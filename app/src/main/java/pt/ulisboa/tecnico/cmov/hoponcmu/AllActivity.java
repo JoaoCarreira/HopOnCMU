@@ -7,4 +7,6 @@ import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 public abstract class AllActivity extends AppCompatActivity{
 
     public abstract void updateInterface(Response response);
+
+    public abstract void updateConnection(String activ);
 }

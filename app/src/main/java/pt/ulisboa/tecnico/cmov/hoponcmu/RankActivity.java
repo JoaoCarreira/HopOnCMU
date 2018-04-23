@@ -118,4 +118,9 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
             lista.setAdapter(customAdapter);
         }
     }
+
+    @Override
+    public void updateConnection(String net){
+
+    }
 }

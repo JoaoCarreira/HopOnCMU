@@ -11,11 +11,6 @@ import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 
 public class RegisterActivity extends AllActivity {
 
-    private String result=null;
-    private String success="Create_Account_Success";
-    private String unsuccess="Create_Account_Failed";
-    private String connection="Without connection";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,21 +36,20 @@ public class RegisterActivity extends AllActivity {
 
     private void validate(String text){
 
+        String success="Create_Account_Success";
+        String failure="Create_Account_Failed";
+
+        TextView text_connection = findViewById(R.id.connection_text_create);
+
         if(text.equals(success)){
+            text_connection.setText("");
             Intent intent = new Intent(RegisterActivity.this, LogInActivity.class);
             startActivity(intent);
         }
 
-        if(text.equals(unsuccess)){
-            TextView text_connection = findViewById(R.id.connection_text_create);
+        if(text.equals(failure)){
             text_connection.setText("Invalid Parameters");
         }
-
-        if(text.equals(connection)){
-            TextView text_connection = findViewById(R.id.connection_text_create);
-            text_connection.setText(result);
-        }
-
     }
 
     @Override
@@ -64,5 +58,18 @@ public class RegisterActivity extends AllActivity {
             HelloResponseRegister hello = (HelloResponseRegister) rsp;
             validate(hello.getMessage());
         }
+    }
+
+    @Override
+    public void updateConnection(String net){
+
+        String connection="Without connection";
+
+        if(net.equals("create_account")){
+
+            TextView text_connection = findViewById(R.id.connection_text_create);
+            text_connection.setText(connection);
+        }
+
     }
 }

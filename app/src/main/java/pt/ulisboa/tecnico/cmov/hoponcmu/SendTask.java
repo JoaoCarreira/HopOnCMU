@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import pt.ulisboa.tecnico.cmov.hoponcmu.command.SendCommand;
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseConnection;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 
 public class SendTask extends AsyncTask<String, Void, Response> {
@@ -21,7 +22,6 @@ public class SendTask extends AsyncTask<String, Void, Response> {
     @Override
     protected Response doInBackground(String[] params) {
         Socket server = null;
-        //String reply;
         Response response=null;
         SendCommand option = new SendCommand(params);
 
@@ -38,12 +38,13 @@ public class SendTask extends AsyncTask<String, Void, Response> {
 
             oos.close();
             ois.close();
-            //Log.d("Resposta", reply);
         }
         catch (Exception e) {
             Log.d("Client", "Without connection..." + e.getMessage());
             e.printStackTrace();
-            //reply="Without connection";
+            String msg=params[0];
+            response = new HelloResponseConnection(msg);
+
         } finally {
             if (server != null) {
                 try { server.close(); }
@@ -56,8 +57,15 @@ public class SendTask extends AsyncTask<String, Void, Response> {
     //@Override
     protected void onPostExecute(Response o) {
 
-        if (o != null) {
+        if (o != null && (!o.getClass().equals(HelloResponseConnection.class))) {
             activity.updateInterface(o);
+
+        }
+
+        if(o != null && (o.getClass().equals(HelloResponseConnection.class))){
+            HelloResponseConnection hello = (HelloResponseConnection) o;
+            String act= hello.getMessage();
+            activity.updateConnection(act);
         }
     }
 
