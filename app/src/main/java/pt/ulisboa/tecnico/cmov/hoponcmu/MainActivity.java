@@ -2,11 +2,13 @@ package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseQuestion;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 
@@ -16,7 +18,7 @@ public class MainActivity extends AllActivity {
     Button resposta1 , resposta2 , resposta3 , resposta4;
     TextView score , pergunta;
 
-
+    public static final String MY_PREFS_NAME = "MyPrefsFile";
     private Questions questions_receive;
     private String mAnswer;
     private int mScore = 0;
@@ -124,7 +126,7 @@ public class MainActivity extends AllActivity {
 
         if (a==numeroPerguntas){
 
-
+            createBackup();
             SendTask answers = new SendTask(MainActivity.this);
             answers.execute("update_score",""+mScore,LogInActivity.getUser());
 
@@ -188,8 +190,34 @@ public class MainActivity extends AllActivity {
     }
 
     @Override
-    public void updateConnection(String net){
+    public void updateConnection(String net) {
 
+        if (net.equals("criar_questao")){
+
+        }
+
+        if (net.equals("update_score")) {
+            readBackup();
+            Log.d("aaaaaaa",""+mScore);
+            SendTask answers = new SendTask(MainActivity.this);
+            answers.execute("update_score", "" + mScore, LogInActivity.getUser());
+
+        }
+    }
+
+    public void createBackup(){
+        SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putInt("score", mScore);
+        editor.apply();
+    }
+
+    public void readBackup(){
+
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        String restoredText = prefs.getString("text", null);
+        if (restoredText != null) {
+            mScore = prefs.getInt("score", 0); //0 is the default value.
+        }
     }
 }
 

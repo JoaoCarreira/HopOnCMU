@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +27,7 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
 
     BottomNavigationView bottomNavigationView;
 
+    public static final String MY_PREFS_NAME = "MyPrefsFile";
     private ArrayList<String> users =new ArrayList<String>();
     private ArrayList<String> scores =new ArrayList<String>();
 
@@ -117,10 +121,45 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
             CustomAdapter customAdapter = new CustomAdapter();
             lista.setAdapter(customAdapter);
         }
+
+        createBackup();
     }
 
     @Override
-    public void updateConnection(String net){
+    public void updateConnection(String net) {
 
+        if (net.equals("get_rank")){
+
+            readBackup();
+
+            ListView lista = (ListView)findViewById(R.id.lista);
+            CustomAdapter customAdapter = new CustomAdapter();
+            lista.setAdapter(customAdapter);
+        }
+    }
+
+    public void createBackup(){
+        SharedPreferences.Editor prefsEditor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+
+        Gson gson = new Gson();
+        String jsonTextUsers = gson.toJson(users);
+        String jsonTextScores = gson.toJson(scores);
+
+        prefsEditor.putString("users", jsonTextUsers);
+        prefsEditor.apply();
+
+        prefsEditor.putString("scores", jsonTextScores);
+        prefsEditor.apply();
+
+    }
+
+    public void readBackup(){
+
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String jsonTextUsers = prefs.getString("users", null);
+        users = gson.fromJson(jsonTextUsers, ArrayList.class);
+        String jsonTextScores = prefs.getString("scores", null);
+        scores = gson.fromJson(jsonTextScores, ArrayList.class);
     }
 }
