@@ -95,10 +95,12 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
             TextView textView_rank = (TextView)view.findViewById(R.id.rank);
             TextView textView_user = (TextView)view.findViewById(R.id.user);
             TextView textView_score = (TextView)view.findViewById(R.id.score);
+            TextView textView_rightAnswere = (TextView)view.findViewById(R.id.RightAnswere);
             int lugar = position+1;
             textView_score.setText(scores.get(position));
             textView_user.setText(users.get(position));
             textView_rank.setText((""+ lugar));
+            textView_rightAnswere.setText(scores.get(position));//NEW
 
             return view;
         }
@@ -110,11 +112,30 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
             HelloResponseRank hello = (HelloResponseRank) rsp;
 
             List<ArrayList<String>> rank=hello.getMessage();
+            ArrayList<String> rankAux =new ArrayList<String>();
 
-            for(int i=0; i<rank.size();i++){
+            //Array Aux
+            for (int j=0 ;j<rank.size();j++) {
+                rankAux.add(rank.get(j).get(1));
+            }
+            //Ordenar Array
+            sort(rankAux,Collections.<String>reverseOrder());
+            //Apagar Elementos Repetidos
+            for (int j=1 ;j<rankAux.size();j++) {
+                if (rankAux.get(j).equals(rankAux.get(j-1))){
+                    rankAux.remove(j);
+                }
+            }
 
-                users.add(rank.get(i).get(0));
-                scores.add(rank.get(i).get(1));
+            for(int i=0; i<rankAux.size();i++){
+                for(int j=0; j<rank.size();j++){
+                    if (rankAux.get(i).equals(rank.get(j).get(1))){
+                        users.add(rank.get(j).get(0));
+                        scores.add(rank.get(j).get(1));
+                    }
+
+                }
+
             }
 
             ListView lista = (ListView)findViewById(R.id.lista);
