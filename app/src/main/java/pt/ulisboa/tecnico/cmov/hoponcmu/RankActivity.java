@@ -116,20 +116,19 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
 
             //Array Aux
             for (int j=0 ;j<rank.size();j++) {
-                rankAux.add(rank.get(j).get(1));
+                rankAux.add(Integer.parseInt(rank.get(j).get(1)));
             }
             //Ordenar Array
-            sort(rankAux,Collections.<String>reverseOrder());
+            sort(rankAux,Collections.reverseOrder());
             //Apagar Elementos Repetidos
             for (int j=1 ;j<rankAux.size();j++) {
                 if (rankAux.get(j).equals(rankAux.get(j-1))){
                     rankAux.remove(j);
                 }
             }
-
             for(int i=0; i<rankAux.size();i++){
                 for(int j=0; j<rank.size();j++){
-                    if (rankAux.get(i).equals(rank.get(j).get(1))){
+                    if (rankAux.get(i).equals(Integer.parseInt((rank.get(j).get(1))))){
                         users.add(rank.get(j).get(0));
                         scores.add(rank.get(j).get(1));
                     }
