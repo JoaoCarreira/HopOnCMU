@@ -88,4 +88,16 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="73dp"
         android:visibility="invisible"/>
+
+    <Chronometer
+        android:id="@+id/chronometer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/score"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="27dp"
+        android:layout_marginRight="27dp"
+        android:textSize="30sp"
+        android:textColor="@color/colorPrimary"/>
 </RelativeLayout>

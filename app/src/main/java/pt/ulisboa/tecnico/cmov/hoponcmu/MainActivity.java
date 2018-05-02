@@ -3,9 +3,11 @@ package pt.ulisboa.tecnico.cmov.hoponcmu;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.TextView;
 
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseQuestion;
@@ -31,6 +33,8 @@ public class MainActivity extends AllActivity {
     String monument;
     GlobalClass globalclass;
     Boolean save_quizz;
+    Chronometer chronometer;
+    int elapsedMillis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,8 @@ public class MainActivity extends AllActivity {
         resposta4 = (Button)findViewById(R.id.resposta4);
 
         pergunta = (TextView) findViewById(R.id.pergunta);
+
+        chronometer = (Chronometer) findViewById(R.id.chronometer);
 
         globalclass= (GlobalClass) getApplicationContext();
         save_quizz=globalclass.getState();
@@ -164,6 +170,12 @@ public class MainActivity extends AllActivity {
 
     public void ShowPopUp(Boolean fin){
 
+        if(numeroRespostas==numeroPerguntas){
+            chronometer.stop();
+            elapsedMillis = (int) (SystemClock.elapsedRealtime() - chronometer.getBase());
+            Log.d("cronometro",""+elapsedMillis);
+        }
+
         mydialog=new Dialog(MainActivity.this);
         mydialog.setContentView(R.layout.custompopup);
 
@@ -225,6 +237,8 @@ public class MainActivity extends AllActivity {
                 getVisible();
                 updateQuestion(numeroRespostas);
                 initdialog.dismiss();
+                chronometer.setBase(SystemClock.elapsedRealtime());
+                chronometer.start();
             }
         });
 
