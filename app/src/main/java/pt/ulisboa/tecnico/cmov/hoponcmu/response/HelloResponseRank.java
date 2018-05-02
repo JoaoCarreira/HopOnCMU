@@ -16,5 +16,3 @@ public class HelloResponseRank implements Response {
         return this.message;
     }
 }
-
-

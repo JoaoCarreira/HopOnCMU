@@ -18,24 +18,38 @@
 
     <TextView
         android:id="@+id/user"
-        android:layout_width="260dp"
+        android:layout_width="130dp"
         android:layout_height="42dp"
+        android:layout_marginEnd="27dp"
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:text="User"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="65dp" />
+        app:layout_constraintEnd_toStartOf="@+id/RightAnswere"
+        app:layout_constraintStart_toEndOf="@+id/rank"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/score"
-        android:layout_width="77dp"
-        android:layout_height="41dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="71dp"
+        android:layout_height="38dp"
         android:gravity="center"
         android:text="Score"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/RightAnswere"
+        app:layout_constraintTop_toTopOf="@+id/RightAnswere" />
+
+    <TextView
+        android:id="@+id/RightAnswere"
+        android:layout_width="91dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="27dp"
+        android:gravity="center"
+        android:text="Right Answers"
+        app:layout_constraintEnd_toStartOf="@+id/score"
+        app:layout_constraintStart_toEndOf="@+id/user"
         app:layout_constraintTop_toTopOf="@+id/user" />
+
+
 
     <ListView
         android:id="@+id/lista"
@@ -57,6 +71,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/navigation_menu" />
+
 
 
 </android.support.constraint.ConstraintLayout>

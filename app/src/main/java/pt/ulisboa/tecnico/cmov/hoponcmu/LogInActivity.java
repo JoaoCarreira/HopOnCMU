@@ -12,7 +12,7 @@ import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 
 public class LogInActivity extends AllActivity {
 
-    private static String session=null;
+    private static Integer session=null;
     private String username_str;
     private String password_str;
 
@@ -46,11 +46,11 @@ public class LogInActivity extends AllActivity {
 
     }
 
-    public static String getUser(){
+    public static Integer getSession(){
         return session;
     }
 
-    public String setSession(String id){
+    public Integer setSession(Integer id){
         this.session=id;
         return session;
     }
@@ -75,18 +75,22 @@ public class LogInActivity extends AllActivity {
 
     }
 
-    public void evaluate(String result){
+    public void evaluate(String res){
 
         String success="Login_Success";
         String failure="Login_Failed";
+        String[] compare=res.split(",");
+        String result= compare[0];
 
         TextView text_connection = findViewById(R.id.connection_text);
 
         if(result.equals(success)){
-            setSession(username_str);
+            Integer id_session= Integer.parseInt(compare[1]);
+            setSession(id_session);
             text_connection.setText("");
             Intent intent = new Intent(LogInActivity.this, ListActivity.class);
             startActivity(intent);
+
         }
 
         if(result.equals(failure)){

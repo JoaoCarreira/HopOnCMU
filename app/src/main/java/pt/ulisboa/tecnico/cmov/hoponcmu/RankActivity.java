@@ -1,27 +1,25 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseRank;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
+
+import static java.util.Collections.sort;
 
 public class RankActivity extends AllActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -45,9 +43,6 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
     }
 
 
-
-
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item){
         final Intent quizIntent = new Intent(this,ListActivity.class);
@@ -62,11 +57,10 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
             case R.id.lista:
                 startActivity(quizIntent);
                 break;
-            /*case R.id.logout:
-                String username=LogInActivity.getUser();
-                ListActivity.logoutMethod(username);
+            case R.id.logout:
+                logoutMethod();
                 startActivity(logoutIntent);
-                break;*/
+                break;
         }
 
         return true;
@@ -96,11 +90,13 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
             TextView textView_user = (TextView)view.findViewById(R.id.user);
             TextView textView_score = (TextView)view.findViewById(R.id.score);
             TextView textView_rightAnswere = (TextView)view.findViewById(R.id.RightAnswere);
+
             int lugar = position+1;
+            Log.d("posiçao",""+position);
             textView_score.setText(scores.get(position));
             textView_user.setText(users.get(position));
             textView_rank.setText((""+ lugar));
-            textView_rightAnswere.setText(scores.get(position));//NEW
+            textView_rightAnswere.setText(scores.get(position));
 
             return view;
         }
@@ -112,14 +108,14 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
             HelloResponseRank hello = (HelloResponseRank) rsp;
 
             List<ArrayList<String>> rank=hello.getMessage();
-            ArrayList<String> rankAux =new ArrayList<String>();
+            ArrayList<Integer> rankAux =new ArrayList<Integer>();
 
             //Array Aux
             for (int j=0 ;j<rank.size();j++) {
                 rankAux.add(Integer.parseInt(rank.get(j).get(1)));
             }
             //Ordenar Array
-            sort(rankAux,Collections.reverseOrder());
+            sort(rankAux, Collections.reverseOrder());
             //Apagar Elementos Repetidos
             for (int j=1 ;j<rankAux.size();j++) {
                 if (rankAux.get(j).equals(rankAux.get(j-1))){
@@ -141,8 +137,6 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
             CustomAdapter customAdapter = new CustomAdapter();
             lista.setAdapter(customAdapter);
         }
-
-        createBackup();
     }
 
     @Override
@@ -150,36 +144,19 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
 
         if (net.equals("get_rank")){
 
-            readBackup();
-
             ListView lista = (ListView)findViewById(R.id.lista);
             CustomAdapter customAdapter = new CustomAdapter();
             lista.setAdapter(customAdapter);
         }
+
+        if(net.equals("logout")){
+            logoutMethod();
+        }
     }
 
-    public void createBackup(){
-        SharedPreferences.Editor prefsEditor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-
-        Gson gson = new Gson();
-        String jsonTextUsers = gson.toJson(users);
-        String jsonTextScores = gson.toJson(scores);
-
-        prefsEditor.putString("users", jsonTextUsers);
-        prefsEditor.apply();
-
-        prefsEditor.putString("scores", jsonTextScores);
-        prefsEditor.apply();
-
-    }
-
-    public void readBackup(){
-
-        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        Gson gson = new Gson();
-        String jsonTextUsers = prefs.getString("users", null);
-        users = gson.fromJson(jsonTextUsers, ArrayList.class);
-        String jsonTextScores = prefs.getString("scores", null);
-        scores = gson.fromJson(jsonTextScores, ArrayList.class);
+    public void logoutMethod(){
+        int session_log=LogInActivity.getSession();
+        SendTask task= new SendTask(RankActivity.this);
+        task.execute("logout",""+session_log);
     }
 }

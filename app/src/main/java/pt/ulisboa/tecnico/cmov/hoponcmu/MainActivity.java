@@ -2,7 +2,6 @@ package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,8 +23,14 @@ public class MainActivity extends AllActivity {
     private int mScore = 0;
     int numeroPerguntas= 4;
     int numeroRespostas= 0;
-
     Dialog mydialog;
+    Dialog initdialog;
+    Boolean already_answer=false;
+    String points="";
+    String resp="";
+    String monument;
+    GlobalClass globalclass;
+    Boolean save_quizz;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +39,32 @@ public class MainActivity extends AllActivity {
 
         Intent Mintent = getIntent();
         Bundle bundle = Mintent.getExtras();
-        String monument = bundle.getString("monumento");
-
-
-        SendTask questions = new SendTask(MainActivity.this);
-        questions.execute("criar_questao",monument);
+        monument = bundle.getString("monumento");
 
         score = (TextView) findViewById(R.id.score);
         score.setText("Score: " + mScore);
 
+        resposta1 = (Button)findViewById(R.id.resposta1);
+        resposta2 = (Button)findViewById(R.id.resposta2);
+        resposta3 = (Button)findViewById(R.id.resposta3);
+        resposta4 = (Button)findViewById(R.id.resposta4);
 
+        pergunta = (TextView) findViewById(R.id.pergunta);
+
+        globalclass= (GlobalClass) getApplicationContext();
+        save_quizz=globalclass.getState();
+
+        if (save_quizz.equals(true)){
+            questions_receive=globalclass.getQuestions();
+            getVisible();
+            updateQuestion(numeroRespostas);
+            create_quizz();
+        }
+
+        else {
+            SendTask questions = new SendTask(MainActivity.this);
+            questions.execute("criar_questao", monument);
+        }
     }
 
     @Override
@@ -52,85 +73,75 @@ public class MainActivity extends AllActivity {
             HelloResponseQuestion hello = (HelloResponseQuestion) rsp;
             questions_receive=hello.getMessage();
 
-            resposta1 = (Button)findViewById(R.id.resposta1);
-            resposta2 = (Button)findViewById(R.id.resposta2);
-            resposta3 = (Button)findViewById(R.id.resposta3);
-            resposta4 = (Button)findViewById(R.id.resposta4);
+            ShowPopUpLater();
 
-            score = (TextView) findViewById(R.id.score);
-            pergunta = (TextView) findViewById(R.id.pergunta);
-
-            updateQuestion(numeroRespostas);
-
-            resposta1.setOnClickListener(new View.OnClickListener() {
-                @Override
-
-                public void onClick(View v) {
-
-                    if(resposta1.getText().toString().equals(mAnswer)){
-                        mScore ++ ;
-                        score.setText("Score: " + mScore);
-                        ShowPopUp(true);
-                    }
-                    else{
-                        ShowPopUp(false);
-                    }
-                }
-
-
-            });
-            resposta2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(resposta2.getText().toString().equals(mAnswer)){
-                        mScore ++ ;
-                        score.setText("Score: " + mScore);
-                        ShowPopUp(true);
-                    }
-                    else{
-                        ShowPopUp(false);
-                    }
-                }
-            });
-            resposta3.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(resposta3.getText().toString().equals(mAnswer)){
-                        mScore ++ ;
-                        score.setText("Score: " + mScore);
-                        ShowPopUp(true);
-                    }
-                    else{
-                        ShowPopUp(false);
-                    }
-                }
-            });
-            resposta4.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(resposta4.getText().toString().equals(mAnswer)){
-                        mScore ++ ;
-                        score.setText("Score: " + mScore);
-                        String aux="+ 1 Ponto";
-                        ShowPopUp(true);
-                    }
-                    else{
-                        ShowPopUp(false);
-                    }
-                }
-            });
+            create_quizz();
         }
+    }
+
+    public void create_quizz(){
+
+        resposta1.setOnClickListener(new View.OnClickListener() {
+            @Override
+
+            public void onClick(View v) {
+
+                if(resposta1.getText().toString().equals(mAnswer)){
+                    ShowPopUp(true);
+                }
+                else{
+                    ShowPopUp(false);
+                }
+                already_answer=true;
+            }
+
+
+        });
+        resposta2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(resposta2.getText().toString().equals(mAnswer)){
+                    ShowPopUp(true);
+                }
+                else{
+                    ShowPopUp(false);
+                }
+                already_answer=true;
+            }
+        });
+        resposta3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(resposta3.getText().toString().equals(mAnswer)){
+                    ShowPopUp(true);
+                }
+                else{
+                    ShowPopUp(false);
+                }
+                already_answer=true;
+            }
+        });
+        resposta4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(resposta4.getText().toString().equals(mAnswer)){
+                    ShowPopUp(true);
+                }
+                else{
+                    ShowPopUp(false);
+                }
+                already_answer=true;
+            }
+        });
     }
 
     private void updateQuestion(int a) {
 
         if (a==numeroPerguntas){
 
-            createBackup();
+            globalclass.setState(false);
             SendTask answers = new SendTask(MainActivity.this);
-            answers.execute("update_score",""+mScore,LogInActivity.getUser());
-
-            Log.d("User",LogInActivity.getUser());
+            answers.execute("update_score",""+LogInActivity.getSession(),""+mScore);
 
             final Intent intent = new Intent(this,ListActivity.class);
             startActivity(intent);
@@ -146,29 +157,40 @@ public class MainActivity extends AllActivity {
             mAnswer = questions_receive.getCorrect(a);
 
             numeroRespostas++;
+
+            already_answer=false;
         }
     }
 
     public void ShowPopUp(Boolean fin){
-
-        String points;
-        String resp;
 
         mydialog=new Dialog(MainActivity.this);
         mydialog.setContentView(R.layout.custompopup);
 
         mydialog.show();
 
-        if (fin==true) {
-            points="+ 1 Ponto";
-            resp="Resposta Correta";
-            mydialog.getWindow().setBackgroundDrawableResource(R.color.Green);
+        if (already_answer.equals(false)) {
+            if (fin == true) {
+                mScore ++ ;
+                score.setText("Score: " + mScore);
+                points = "+ 1 Ponto";
+                resp = "Resposta Correta";
+                mydialog.getWindow().setBackgroundDrawableResource(R.color.Green);
+
+            } else {
+                resp = "Resposta Errada";
+                points = "Falta de sorte";
+                mydialog.getWindow().setBackgroundDrawableResource(R.color.Red);
+            }
         }
 
         else{
-            resp="Resposta Errada";
-            points="Falta de sorte";
-            mydialog.getWindow().setBackgroundDrawableResource(R.color.Red);
+            if (points.equals("+ 1 Ponto")){
+                mydialog.getWindow().setBackgroundDrawableResource(R.color.Green);
+            }
+            else{
+                mydialog.getWindow().setBackgroundDrawableResource(R.color.Red);
+            }
         }
 
         TextView resposta_final = mydialog.findViewById(R.id.textView4);
@@ -183,10 +205,39 @@ public class MainActivity extends AllActivity {
             @Override
             public void onClick(View v) {
                 mydialog.dismiss();
+                updateQuestion(numeroRespostas);
+            }
+        });
+    }
+
+    public void ShowPopUpLater() {
+
+        initdialog = new Dialog(MainActivity.this);
+        initdialog.setContentView(R.layout.laterquizz_layout);
+        initdialog.show();
+
+        Button now = initdialog.findViewById(R.id.now_button);
+        Button later = initdialog.findViewById(R.id.later_button);
+
+        now.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getVisible();
+                updateQuestion(numeroRespostas);
+                initdialog.dismiss();
             }
         });
 
-        updateQuestion(numeroRespostas);
+        later.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                globalclass.setQuestions(questions_receive);
+                globalclass.setState(true);
+                goBack();
+                initdialog.dismiss();
+            }
+
+        });
     }
 
     @Override
@@ -197,27 +248,29 @@ public class MainActivity extends AllActivity {
         }
 
         if (net.equals("update_score")) {
-            readBackup();
-            Log.d("aaaaaaa",""+mScore);
             SendTask answers = new SendTask(MainActivity.this);
-            answers.execute("update_score", "" + mScore, LogInActivity.getUser());
+            answers.execute("update_score", "" + mScore, ""+LogInActivity.getSession());
 
         }
     }
 
-    public void createBackup(){
-        SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-        editor.putInt("score", mScore);
-        editor.apply();
+    @Override
+    public void onBackPressed() {
+        // não chame o super desse método
     }
 
-    public void readBackup(){
-
-        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        String restoredText = prefs.getString("text", null);
-        if (restoredText != null) {
-            mScore = prefs.getInt("score", 0); //0 is the default value.
-        }
+    public void goBack(){
+        final Intent intent = new Intent(this,ListActivity.class);
+        startActivity(intent);
     }
+
+    public void getVisible(){
+        pergunta.setVisibility(TextView.VISIBLE);
+        resposta1.setVisibility(Button.VISIBLE);
+        resposta2.setVisibility(Button.VISIBLE);
+        resposta3.setVisibility(Button.VISIBLE);
+        resposta4.setVisibility(Button.VISIBLE);
+    }
+
 }
 

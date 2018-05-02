@@ -16,7 +16,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ListActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
+import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
+
+public class ListActivity  extends AllActivity  implements BottomNavigationView.OnNavigationItemSelectedListener{
 
     String [] listaMonumentos ={"Torre de Belem","Mosteiros dos Jeronimos","Bairro Alto","Rossio",
             "Praça do Comercio","Museu Marinha","CCB","Museu Nacional do Azulejo","Principe Real"};
@@ -64,12 +66,10 @@ public class ListActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.lista:
                 startActivity(quizIntent);
                 break;
-            /*case R.id.logout:
-                String username=LogInActivity.getUser();
-                Log.d("LogOut", username);
-                logoutMethod(username);
+            case R.id.logout:
+                logoutMethod();
                 startActivity(logoutIntent);
-                break;*/
+                break;
         }
 
         return true;
@@ -103,9 +103,20 @@ public class ListActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
-    /*public static void logoutMethod(String username){
+    public void logoutMethod(){
 
-        SendTask task= new SendTask();
-        task.execute("logout",username);
-    }*/
+        int session_log=LogInActivity.getSession();
+        SendTask task= new SendTask(ListActivity.this);
+        task.execute("logout",""+session_log);
+    }
+
+    @Override
+    public void updateInterface(Response response){
+
+    }
+
+    @Override
+    public void updateConnection(String activ){
+
+    }
 }

@@ -17,21 +17,36 @@
 
     <TextView
         android:id="@+id/user"
-        android:layout_width="260dp"
+        android:layout_width="171dp"
         android:layout_height="42dp"
-        android:text="TextView"
         android:gravity="center"
+        android:text="TextView"
         tools:layout_editor_absoluteX="65dp"
         tools:layout_editor_absoluteY="7dp" />
 
     <TextView
         android:id="@+id/score"
-        android:layout_width="77dp"
-        android:layout_height="41dp"
+        android:layout_width="63dp"
+        android:layout_height="42dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="TextView"
         android:gravity="center"
+        android:text="TextView"
         app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="7dp"
         app:layout_constraintTop_toTopOf="@+id/user" />
+
+    <TextView
+        android:id="@+id/RightAnswere"
+        android:layout_width="76dp"
+        android:layout_height="41dp"
+        android:layout_marginEnd="72dp"
+        android:layout_marginRight="72dp"
+        android:layout_marginTop="7dp"
+        android:gravity="center"
+        android:text="TextView"
+        tools:layout_editor_absoluteY="7dp"
+        app:layout_constraintEnd_toEndOf="parent"
+         />
+
 </android.support.constraint.ConstraintLayout>
