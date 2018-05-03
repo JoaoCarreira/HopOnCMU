@@ -1,11 +1,9 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.design.internal.BottomNavigationItemView;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,18 +16,24 @@ import android.widget.TextView;
 
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 
-public class ListActivity  extends AllActivity  implements BottomNavigationView.OnNavigationItemSelectedListener{
+public class ListActivity extends AllActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
     String [] listaMonumentos ={"Torre de Belem","Mosteiros dos Jeronimos","Bairro Alto","Rossio",
             "Praça do Comercio","Museu Marinha","CCB","Museu Nacional do Azulejo","Principe Real"};
 
-    int[] images = {R.drawable.padrao,R.drawable.padrao,R.drawable.padrao,R.drawable.padrao,R.drawable.padrao,R.drawable.padrao,R.drawable.padrao,R.drawable.padrao,R.drawable.padrao};
+    int[] images = {R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao};
     BottomNavigationView bottomNavigationView;
+
+    GlobalClass globalclass;
+    String monumento;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+        globalclass= (GlobalClass) getApplicationContext();
+        monumento = globalclass.getMonumento();
 
         final ListView lista = (ListView)findViewById(R.id.lista);
         final CustomAdapter customAdapter = new CustomAdapter();
@@ -95,17 +99,29 @@ public class ListActivity  extends AllActivity  implements BottomNavigationView.
         public View getView(int position, View view, ViewGroup viewGroup) {
             view = getLayoutInflater().inflate(R.layout.custom_layout,null);
             ImageView imageView=(ImageView)view.findViewById(R.id.imageView);
-            TextView textView_name = (TextView)view.findViewById(R.id.textView_name);
+            final TextView textView_name = (TextView)view.findViewById(R.id.textView_name);
+            ImageView share = (ImageView)view.findViewById(R.id.Share);
 
             imageView.setImageResource(images[position]);
             textView_name.setText(listaMonumentos[position]);
+
+            if(listaMonumentos[position].equals(monumento)) {
+                share.setVisibility(view.VISIBLE);
+                share.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Log.d("asd",globalclass.getRank()+"");
+                        v.setVisibility(v.GONE);
+                    }
+                });
+
+            }
             return view;
         }
     }
 
     public void logoutMethod(){
 
-        int session_log=LogInActivity.getSession();
+        int session_log= LogInActivity.getSession();
         SendTask task= new SendTask(ListActivity.this);
         task.execute("logout",""+session_log);
     }

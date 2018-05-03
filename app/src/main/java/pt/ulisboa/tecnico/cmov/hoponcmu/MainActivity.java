@@ -45,6 +45,7 @@ public class MainActivity extends AllActivity {
         Bundle bundle = Mintent.getExtras();
         monument = bundle.getString("monumento");
 
+
         score = (TextView) findViewById(R.id.score);
         score.setText("Score: " + mScore);
 
@@ -58,6 +59,7 @@ public class MainActivity extends AllActivity {
         chronometer = (Chronometer) findViewById(R.id.chronometer);
 
         globalclass= (GlobalClass) getApplicationContext();
+        globalclass.setMonumento(monument);
         save_quizz=globalclass.getState();
 
         if (save_quizz.equals(true)){
@@ -79,9 +81,17 @@ public class MainActivity extends AllActivity {
             HelloResponseQuestion hello = (HelloResponseQuestion) rsp;
             questions_receive=hello.getMessage();
 
+            Log.d("merda",questions_receive.getChoice1(1));
+            if (questions_receive==null) {
+                final Intent quizIntent = new Intent(this,ListActivity.class);
+                startActivity(quizIntent);
+            }
+
+
             ShowPopUpLater();
 
             create_quizz();
+
         }
     }
 
@@ -147,7 +157,9 @@ public class MainActivity extends AllActivity {
 
             globalclass.setState(false);
             SendTask answers = new SendTask(MainActivity.this);
-            answers.execute("update_score",""+LogInActivity.getSession(),""+mScore);
+            answers.execute("update_score",""+ LogInActivity.getSession(),""+mScore);
+            globalclass.setRank(mScore);
+            globalclass.setScore(mScore);
 
             final Intent intent = new Intent(this,ListActivity.class);
             startActivity(intent);
@@ -263,7 +275,7 @@ public class MainActivity extends AllActivity {
 
         if (net.equals("update_score")) {
             SendTask answers = new SendTask(MainActivity.this);
-            answers.execute("update_score", "" + mScore, ""+LogInActivity.getSession());
+            answers.execute("update_score", "" + mScore, ""+ LogInActivity.getSession());
 
         }
     }
