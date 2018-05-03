@@ -32,6 +32,14 @@ public class RegisterActivity extends AllActivity {
 
             }
         });
+
+        findViewById(R.id.button_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RegisterActivity.this, LogInActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void validate(String text){
