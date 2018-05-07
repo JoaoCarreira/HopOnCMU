@@ -19,7 +19,6 @@ public class MainActivity extends AllActivity {
     Button resposta1 , resposta2 , resposta3 , resposta4;
     TextView score , pergunta;
 
-    public static final String MY_PREFS_NAME = "MyPrefsFile";
     private Questions questions_receive;
     private String mAnswer;
     private int mScore = 0;
@@ -81,7 +80,6 @@ public class MainActivity extends AllActivity {
             HelloResponseQuestion hello = (HelloResponseQuestion) rsp;
             questions_receive=hello.getMessage();
 
-            Log.d("merda",questions_receive.getChoice1(1));
             if (questions_receive==null) {
                 final Intent quizIntent = new Intent(this,ListActivity.class);
                 startActivity(quizIntent);
@@ -157,7 +155,7 @@ public class MainActivity extends AllActivity {
 
             globalclass.setState(false);
             SendTask answers = new SendTask(MainActivity.this);
-            answers.execute("update_score",""+ LogInActivity.getSession(),""+mScore);
+            answers.execute("update_score",""+ LogInActivity.getSession(),""+mScore,""+mScore);
             globalclass.setRank(mScore);
             globalclass.setScore(mScore);
 

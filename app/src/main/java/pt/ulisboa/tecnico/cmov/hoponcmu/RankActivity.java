@@ -25,9 +25,9 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
 
     BottomNavigationView bottomNavigationView;
 
-    public static final String MY_PREFS_NAME = "MyPrefsFile";
     private ArrayList<String> users =new ArrayList<String>();
     private ArrayList<String> scores =new ArrayList<String>();
+    private ArrayList<String> correct =new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,14 +89,14 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
             TextView textView_rank = (TextView)view.findViewById(R.id.rank);
             TextView textView_user = (TextView)view.findViewById(R.id.user);
             TextView textView_score = (TextView)view.findViewById(R.id.score);
-            TextView textView_rightAnswere = (TextView)view.findViewById(R.id.RightAnswere);
+            TextView textView_rightAnswers = (TextView)view.findViewById(R.id.RightAnswere);
 
             int lugar = position+1;
             Log.d("posiçao",""+position);
             textView_score.setText(scores.get(position));
             textView_user.setText(users.get(position));
             textView_rank.setText((""+ lugar));
-            textView_rightAnswere.setText(scores.get(position));
+            textView_rightAnswers.setText(correct.get(position));
 
             return view;
         }
@@ -127,6 +127,7 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
                     if (rankAux.get(i).equals(Integer.parseInt((rank.get(j).get(1))))){
                         users.add(rank.get(j).get(0));
                         scores.add(rank.get(j).get(1));
+                        correct.add(rank.get(j).get(2));
                     }
 
                 }

@@ -1,6 +1,10 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.SupplicantState;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -26,6 +30,7 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
 
     GlobalClass globalclass;
     String monumento;
+    String ssid = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,16 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
         final CustomAdapter customAdapter = new CustomAdapter();
         lista.setAdapter(customAdapter);
         final Intent quizIntent = new Intent(this,MainActivity.class);
+
+        /*WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo;
+
+        wifiInfo = wifiManager.getConnectionInfo();
+        if (wifiInfo.getSupplicantState() == SupplicantState.COMPLETED) {
+            ssid = wifiInfo.getSSID();
+        }
+
+        Log.d("wifi", ssid);*/
 
         bottomNavigationView=(BottomNavigationView) findViewById(R.id.navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
