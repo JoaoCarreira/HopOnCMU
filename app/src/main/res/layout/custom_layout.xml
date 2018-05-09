@@ -27,14 +27,4 @@
         android:text="TextView"
         android:textSize="20sp" />
 
-    <ImageView
-        android:id="@+id/Share"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="-37dp"
-        android:layout_marginTop="20dp"
-        android:visibility="invisible"
-        android:layout_toEndOf="@+id/textView_name"
-        app:srcCompat="?attr/actionModeShareDrawable" />
 </RelativeLayout>

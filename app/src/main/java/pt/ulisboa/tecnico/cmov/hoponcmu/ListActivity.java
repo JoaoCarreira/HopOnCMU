@@ -23,7 +23,7 @@ import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 public class ListActivity extends AllActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
     String [] listaMonumentos ={"Torre de Belem","Mosteiros dos Jeronimos","Bairro Alto","Rossio",
-            "Praça do Comercio","Museu Marinha","CCB","Museu Nacional do Azulejo","Principe Real"};
+            "Praca do Comercio","Museu Marinha","CCB","Museu Nacional do Azulejo","Principe Real"};
 
     int[] images = {R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao};
     BottomNavigationView bottomNavigationView;
@@ -115,21 +115,11 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
             view = getLayoutInflater().inflate(R.layout.custom_layout,null);
             ImageView imageView=(ImageView)view.findViewById(R.id.imageView);
             final TextView textView_name = (TextView)view.findViewById(R.id.textView_name);
-            ImageView share = (ImageView)view.findViewById(R.id.Share);
 
             imageView.setImageResource(images[position]);
             textView_name.setText(listaMonumentos[position]);
 
-            if(listaMonumentos[position].equals(monumento)) {
-                share.setVisibility(view.VISIBLE);
-                share.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        Log.d("asd",globalclass.getRank()+"");
-                        v.setVisibility(v.GONE);
-                    }
-                });
 
-            }
             return view;
         }
     }
