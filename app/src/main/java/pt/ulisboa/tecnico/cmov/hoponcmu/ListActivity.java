@@ -25,7 +25,7 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
     String [] listaMonumentos ={"Torre de Belem","Mosteiros dos Jeronimos","Bairro Alto","Rossio",
             "Praca do Comercio","Museu Marinha","CCB","Museu Nacional do Azulejo","Principe Real"};
 
-    int[] images = {R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao, R.drawable.padrao};
+    int[] images = {R.drawable.torre_de_belem,R.drawable.mosteiro_dos_jeronimos,R.drawable.bairro_alto,R.drawable.rossio,R.drawable.praca,R.drawable.museu_da_marinha,R.drawable.ccb,R.drawable.museu_do_azulejo,R.drawable.principe_real};
     BottomNavigationView bottomNavigationView;
 
     GlobalClass globalclass;
