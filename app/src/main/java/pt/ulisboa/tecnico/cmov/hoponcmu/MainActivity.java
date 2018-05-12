@@ -64,6 +64,8 @@ public class MainActivity extends AllActivity {
         if (save_quizz.equals(true)){
             questions_receive=globalclass.getQuestions();
             getVisible();
+            chronometer.setBase(SystemClock.elapsedRealtime());
+            chronometer.start();
             updateQuestion(numeroRespostas);
             create_quizz();
         }

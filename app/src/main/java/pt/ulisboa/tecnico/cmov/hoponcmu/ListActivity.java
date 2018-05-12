@@ -36,6 +36,7 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
     GlobalClass globalclass;
     String monumento;
     String ssid = null;
+    WifiDirect aux_wifi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
         monumento = globalclass.getMonumento();
 
         final WifiDirect wifiDirect= new WifiDirect(getApplicationContext(),ListActivity.this,getApplication());
+        aux_wifi=wifiDirect;
         wifiDirect.Wifi_ON();
 
         final ListView lista = (ListView)findViewById(R.id.lista);
@@ -107,6 +109,7 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
                 break;
             case R.id.logout:
                 logoutMethod();
+                aux_wifi.Wifi_Off();
                 startActivity(logoutIntent);
                 break;
         }

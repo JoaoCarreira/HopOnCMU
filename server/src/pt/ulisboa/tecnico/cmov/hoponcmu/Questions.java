@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import java.io.Serializable;
+import java.util.*;
 
 public class Questions implements Serializable{
 	 
@@ -175,6 +176,11 @@ public class Questions implements Serializable{
     }
 
     public void setChoices(String[][] choices){
+    	for (int i=0;i<choices.length;i++){
+    		List<String> aux_list = Arrays.asList(choices[i]);
+    		Collections.shuffle(aux_list);
+    		choices[i] = aux_list.toArray(new String[aux_list.size()]);
+    	}
         this.mChoices=choices;
     }
 

@@ -35,6 +35,7 @@ public class WifiDirect implements SimWifiP2pManager.PeerListListener, SimWifiP2
     Context app=null;
     AllActivity rec;
     Application application;
+    Intent intent;
 
     public WifiDirect(Context i, AllActivity a, Application b){
         app=i;
@@ -53,12 +54,14 @@ public class WifiDirect implements SimWifiP2pManager.PeerListListener, SimWifiP2
     }
 
     public void Wifi_ON(){
-        Intent intent = new Intent(rec, SimWifiP2pService.class);
+        intent = new Intent(rec, SimWifiP2pService.class);
+        app.startService(intent);
         app.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         mBound = true;
     }
 
     public void Wifi_Off(){
+        app.stopService(intent);
         app.unbindService(mConnection);
         mBound = false;
     }
