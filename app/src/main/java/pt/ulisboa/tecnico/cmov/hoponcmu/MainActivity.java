@@ -154,6 +154,7 @@ public class MainActivity extends AllActivity {
         if (a==numeroPerguntas){
 
             globalclass.setState(false);
+            globalclass.quizzAnswer(monument);
             SendTask answers = new SendTask(MainActivity.this);
             answers.execute("update_score",""+ LogInActivity.getSession(),""+mScore,""+mScore);
             globalclass.setRank(mScore);

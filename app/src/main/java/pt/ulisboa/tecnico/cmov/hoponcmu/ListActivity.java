@@ -17,6 +17,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
 
@@ -24,6 +27,8 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
 
     String [] listaMonumentos ={"Torre de Belem","Mosteiros dos Jeronimos","Bairro Alto","Rossio",
             "Praca do Comercio","Museu Marinha","CCB","Museu Nacional do Azulejo","Principe Real"};
+
+    String [] listaWifi = {"M1","M2","M3","M4","M5","M6","M7","M8","M9"};
 
     int[] images = {R.drawable.torre_de_belem,R.drawable.mosteiro_dos_jeronimos,R.drawable.bairro_alto,R.drawable.rossio,R.drawable.praca,R.drawable.museu_da_marinha,R.drawable.ccb,R.drawable.museu_do_azulejo,R.drawable.principe_real};
     BottomNavigationView bottomNavigationView;
@@ -40,20 +45,13 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
         globalclass= (GlobalClass) getApplicationContext();
         monumento = globalclass.getMonumento();
 
+        final WifiDirect wifiDirect= new WifiDirect(getApplicationContext(),ListActivity.this,getApplication());
+        wifiDirect.Wifi_ON();
+
         final ListView lista = (ListView)findViewById(R.id.lista);
         final CustomAdapter customAdapter = new CustomAdapter();
         lista.setAdapter(customAdapter);
         final Intent quizIntent = new Intent(this,MainActivity.class);
-
-        /*WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wifiInfo;
-
-        wifiInfo = wifiManager.getConnectionInfo();
-        if (wifiInfo.getSupplicantState() == SupplicantState.COMPLETED) {
-            ssid = wifiInfo.getSSID();
-        }
-
-        Log.d("wifi", ssid);*/
 
         bottomNavigationView=(BottomNavigationView) findViewById(R.id.navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
@@ -61,13 +59,35 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String item= listaMonumentos[position];
+                String item = listaMonumentos[position];
+                String wifi = listaWifi[position];
 
-                Bundle bundle = new Bundle();
-                bundle.putString("monumento",item);
-                quizIntent.putExtras(bundle);
+                Boolean state_quizz = globalclass.getState();
+                ArrayList<String> already_answer=globalclass.getQuizz_answer();
+                
+                if(already_answer.contains(item)){
+                    Toast.makeText(ListActivity.this, "Quizz already answered", Toast.LENGTH_SHORT).show();
+                }
 
-                startActivity(quizIntent);
+                else if (state_quizz.equals(true) && globalclass.getMonumento().equals(item)) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("monumento", item);
+                    quizIntent.putExtras(bundle);
+                    startActivity(quizIntent);
+
+                } else {
+
+                    StringBuilder peersStr = wifiDirect.getPeers();
+
+                    if (peersStr.toString().equals(wifi)) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("monumento", item);
+                        quizIntent.putExtras(bundle);
+                        startActivity(quizIntent);
+                    } else {
+                        Toast.makeText(ListActivity.this, "Not in wifi range", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
     }

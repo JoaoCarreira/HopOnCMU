@@ -99,6 +99,7 @@ public class CommandHandlerImpl implements CommandHandler {
 			ArrayList<String> aux= new ArrayList<String>();
 			aux.add(user.get(0));
 			aux.add(""+0);
+			aux.add(""+0);
 			rank.add(aux);
 		}
 		
@@ -122,6 +123,7 @@ public class CommandHandlerImpl implements CommandHandler {
 				resposta="Create_Account_Success";
 				ArrayList<String> aux= new ArrayList<String>();
 				aux.add(user.get(0));
+				aux.add(""+0);
 				aux.add(""+0);
 				rank.add(aux);
 				
@@ -161,7 +163,11 @@ public class CommandHandlerImpl implements CommandHandler {
 					int aux = Integer.parseInt(score_user.get(1));
 					int aux_score = Integer.parseInt(score.get(1));
 					int final_score=aux+aux_score;
+					int aux_correct = Integer.parseInt(score_user.get(2));
+					int aux_rec_correct = Integer.parseInt(score.get(2));
+					int final_correct=aux_correct+aux_rec_correct;
 					score_user.set(1, ""+final_score);
+					score_user.set(2, ""+final_correct);
 				}
 			}
 		}

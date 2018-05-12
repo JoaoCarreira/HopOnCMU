@@ -1,11 +1,15 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import android.app.Application;
+
+import java.util.ArrayList;
+
 public class GlobalClass extends Application{
     private String monumento;
     private Questions questions;
     private int rank;
     private int score;
+    private ArrayList<String> quizz_answer= new ArrayList<>();
 
     private Boolean state_quizz=false;
 
@@ -47,5 +51,13 @@ public class GlobalClass extends Application{
 
     public void setScore(int score){
         this.score=score;
+    }
+
+    public void quizzAnswer(String monumento){
+        quizz_answer.add(monumento);
+    }
+
+    public ArrayList<String> getQuizz_answer(){
+        return quizz_answer;
     }
 }
