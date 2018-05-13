@@ -1,13 +1,17 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,6 +53,7 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
         final WifiDirect wifiDirect= new WifiDirect(getApplicationContext(),ListActivity.this,getApplication());
         aux_wifi=wifiDirect;
         wifiDirect.Wifi_ON();
+        displayNotification("O Cabrao ganhou 1 ponto");
 
         final ListView lista = (ListView)findViewById(R.id.lista);
         final CustomAdapter customAdapter = new CustomAdapter();
@@ -92,6 +97,24 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
                 }
             }
         });
+    }
+
+    private void displayNotification(String text){
+        Intent intent = new Intent(this, ListActivity.class);
+        PendingIntent notificationPendingIntent = PendingIntent.getActivity(this ,0, intent ,0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"123");
+        builder.setContentTitle("HopOnCMU")
+                .setContentText(text)
+                .setSmallIcon(R.drawable.logo2)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.logo2))
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setAutoCancel(true)
+                .build();
+        NotificationManager notificationManager =(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.notify(0, builder.build());
+        }
+
     }
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item){
