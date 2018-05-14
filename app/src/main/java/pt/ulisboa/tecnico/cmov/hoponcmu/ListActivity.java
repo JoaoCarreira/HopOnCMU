@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -23,9 +24,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
+import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
+
+import static android.content.ContentValues.TAG;
 
 public class ListActivity extends AllActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
@@ -39,8 +47,7 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
 
     GlobalClass globalclass;
     String monumento;
-    String ssid = null;
-    WifiDirect aux_wifi;
+    WifiDirect wifiDirect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +57,8 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
         globalclass= (GlobalClass) getApplicationContext();
         monumento = globalclass.getMonumento();
 
-        final WifiDirect wifiDirect= new WifiDirect(getApplicationContext(),ListActivity.this,getApplication());
-        aux_wifi=wifiDirect;
-        wifiDirect.Wifi_ON();
-        displayNotification("O Cabrao ganhou 1 ponto");
+        wifiDirect=LogInActivity.getWifi();
+        wifiDirect.receiveInfo();
 
         final ListView lista = (ListView)findViewById(R.id.lista);
         final CustomAdapter customAdapter = new CustomAdapter();
@@ -99,7 +104,8 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
         });
     }
 
-    private void displayNotification(String text){
+    @Override
+    public void displayNotification(String text){
         Intent intent = new Intent(this, ListActivity.class);
         PendingIntent notificationPendingIntent = PendingIntent.getActivity(this ,0, intent ,0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"123");
@@ -114,8 +120,8 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
         if (notificationManager != null) {
             notificationManager.notify(0, builder.build());
         }
-
     }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item){
         final Intent quizIntent = new Intent(this,ListActivity.class);
@@ -132,7 +138,7 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
                 break;
             case R.id.logout:
                 logoutMethod();
-                aux_wifi.Wifi_Off();
+                wifiDirect.Wifi_Off();
                 startActivity(logoutIntent);
                 break;
         }
@@ -186,4 +192,6 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
     public void updateConnection(String activ){
 
     }
+
+
 }

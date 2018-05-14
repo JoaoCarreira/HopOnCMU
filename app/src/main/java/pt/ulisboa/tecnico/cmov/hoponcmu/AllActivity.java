@@ -9,4 +9,6 @@ public abstract class AllActivity extends AppCompatActivity{
     public abstract void updateInterface(Response response);
 
     public abstract void updateConnection(String activ);
+
+    public abstract void displayNotification(String notification);
 }

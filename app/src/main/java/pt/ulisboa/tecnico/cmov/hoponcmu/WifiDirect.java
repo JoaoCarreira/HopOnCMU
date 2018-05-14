@@ -9,10 +9,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.Messenger;
+import android.util.Log;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
@@ -20,13 +28,18 @@ import pt.inesc.termite.wifidirect.SimWifiP2pDeviceList;
 import pt.inesc.termite.wifidirect.SimWifiP2pInfo;
 import pt.inesc.termite.wifidirect.SimWifiP2pManager;
 import pt.inesc.termite.wifidirect.service.SimWifiP2pService;
+import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketManager;
+import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 
+import static android.content.ContentValues.TAG;
 import static android.os.Looper.getMainLooper;
 
 public class WifiDirect implements SimWifiP2pManager.PeerListListener, SimWifiP2pManager.GroupInfoListener{
 
     private SimWifiP2pBroadcastReceiver mReceiver;
+    private SimWifiP2pSocketServer mSrvSocket = null;
+    private SimWifiP2pSocket mCliSocket = null;
     private SimWifiP2pManager mManager = null;
     private SimWifiP2pManager.Channel mChannel = null;
     private Messenger mService = null;
@@ -36,6 +49,7 @@ public class WifiDirect implements SimWifiP2pManager.PeerListListener, SimWifiP2
     AllActivity rec;
     Application application;
     Intent intent;
+    private ArrayList<String> peersGroup= new ArrayList<>();;
 
     public WifiDirect(Context i, AllActivity a, Application b){
         app=i;
@@ -93,6 +107,11 @@ public class WifiDirect implements SimWifiP2pManager.PeerListListener, SimWifiP2
         return peersStr;
     }
 
+    public ArrayList<String> getGroup() {
+        mManager.requestGroupInfo(mChannel, this);
+        return peersGroup;
+    }
+
     @Override
     public void onPeersAvailable(SimWifiP2pDeviceList peers) {
 
@@ -109,24 +128,129 @@ public class WifiDirect implements SimWifiP2pManager.PeerListListener, SimWifiP2
     public void onGroupInfoAvailable(SimWifiP2pDeviceList devices,
                                      SimWifiP2pInfo groupInfo) {
 
+        ArrayList<String> peersAuxGroup = new ArrayList<>();
         // compile list of network members
-        StringBuilder peersStr = new StringBuilder();
         for (String deviceName : groupInfo.getDevicesInNetwork()) {
             SimWifiP2pDevice device = devices.getByName(deviceName);
             String devstr = "" + deviceName + " (" +
                     ((device == null)?"??":device.getVirtIp()) + ")\n";
-            peersStr.append(devstr);
+            peersAuxGroup.add(device.getVirtIp());
+        }
+        peersGroup=peersAuxGroup;
+    }
 
+    public class IncommingCommTask extends AsyncTask<Void, String, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
+
+            try {
+                mSrvSocket = new SimWifiP2pSocketServer(
+                        Integer.parseInt("10001"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    SimWifiP2pSocket sock = mSrvSocket.accept();
+                    try {
+                        BufferedReader sockIn = new BufferedReader(
+                                new InputStreamReader(sock.getInputStream()));
+                        String st = sockIn.readLine();
+                        publishProgress(st);
+                        sock.getOutputStream().write(("\n").getBytes());
+                    } catch (IOException e) {
+                        Log.d("Error reading socket:", e.getMessage());
+                    } finally {
+                        sock.close();
+                    }
+                } catch (IOException e) {
+                    Log.d("Error socket:", e.getMessage());
+                    break;
+                    //e.printStackTrace();
+                }
+            }
+            return null;
         }
 
-        // display list of network members
-        new AlertDialog.Builder(rec)
-                .setTitle("Devices in WiFi Network")
-                .setMessage(peersStr.toString())
-                .setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .show();
+        @Override
+        protected void onProgressUpdate(String... values) {
+            Toast.makeText(rec, values[0], Toast.LENGTH_SHORT).show();
+            rec.displayNotification(values[0]);
+        }
+    }
+
+    public class OutgoingCommTask extends AsyncTask<String, Void, String> {
+
+        private String notification;
+        String x=null;
+        @Override
+        protected void onPreExecute() {
+            //mTextOutput.setText("Connecting...");
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                x=params[0];
+                mCliSocket = new SimWifiP2pSocket(params[0],
+                        Integer.parseInt("10001"));
+                notification=params[1];
+            } catch (UnknownHostException e) {
+                return "Unknown Host:" + e.getMessage();
+            } catch (IOException e) {
+                return "IO error:" + e.getMessage();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            new SendCommTask().executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR,notification);
+        }
+    }
+
+    public class SendCommTask extends AsyncTask<String, String, Void> {
+
+        @Override
+        protected Void doInBackground(String... msg) {
+            try {
+                mCliSocket.getOutputStream().write((msg[0] + "\n").getBytes());
+                BufferedReader sockIn = new BufferedReader(
+                        new InputStreamReader(mCliSocket.getInputStream()));
+                sockIn.readLine();
+                mCliSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mCliSocket = null;
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            Toast.makeText(rec, "enviou info", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void sendInfo(String resp){
+
+        WifiDirect wifi=LogInActivity.getWifi();
+        ArrayList<String> group=wifi.getGroup();
+
+        for (int i=0;i<group.size();i++) {
+            new OutgoingCommTask().executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR,group.get(i),resp);
+        }
+    }
+
+    public void receiveInfo(){
+        if (mSrvSocket==null) {
+            new IncommingCommTask().executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR);
+        }
     }
 }

@@ -13,7 +13,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseRank;
@@ -28,11 +27,13 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
     private ArrayList<String> users =new ArrayList<String>();
     private ArrayList<String> scores =new ArrayList<String>();
     private ArrayList<String> correct =new ArrayList<String>();
+    WifiDirect wifi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rank);
+        wifi = LogInActivity.getWifi();
 
         bottomNavigationView=(BottomNavigationView) findViewById(R.id.navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
@@ -59,6 +60,7 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
                 break;
             case R.id.logout:
                 logoutMethod();
+                wifi.Wifi_Off();
                 startActivity(logoutIntent);
                 break;
         }
@@ -144,7 +146,7 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
     public void updateConnection(String net) {
 
         if (net.equals("get_rank")){
-
+            //enviar pedido para outro telemovel
             ListView lista = (ListView)findViewById(R.id.lista);
             CustomAdapter customAdapter = new CustomAdapter();
             lista.setAdapter(customAdapter);
@@ -153,6 +155,11 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
         if(net.equals("logout")){
             logoutMethod();
         }
+    }
+
+    @Override
+    public void displayNotification(String notification) {
+
     }
 
     public void logoutMethod(){

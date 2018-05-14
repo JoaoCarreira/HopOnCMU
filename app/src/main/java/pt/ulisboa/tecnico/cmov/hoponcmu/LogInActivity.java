@@ -15,6 +15,7 @@ public class LogInActivity extends AllActivity {
     private static Integer session=null;
     private String username_str;
     private String password_str;
+    private static WifiDirect wifi_aux;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,11 @@ public class LogInActivity extends AllActivity {
                 EditText password = findViewById(R.id.password_login);
                 username_str= username.getText().toString();
                 password_str= password.getText().toString();
+
+                final WifiDirect wifiDirect= new WifiDirect(getApplicationContext(),LogInActivity.this,getApplication());
+                wifi_aux=wifiDirect;
+                wifiDirect.Wifi_ON();
+
 
                 SendTask task= new SendTask(LogInActivity.this);
                 task.execute("login",username_str,password_str);
@@ -75,6 +81,11 @@ public class LogInActivity extends AllActivity {
 
     }
 
+    @Override
+    public void displayNotification(String notification) {
+
+    }
+
     public void evaluate(String res){
 
         String success="Login_Success";
@@ -98,5 +109,9 @@ public class LogInActivity extends AllActivity {
             text_connection.setText("Invalid parameters");
         }
 
+    }
+
+    public static WifiDirect getWifi(){
+        return wifi_aux;
     }
 }

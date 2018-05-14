@@ -80,4 +80,9 @@ public class RegisterActivity extends AllActivity {
         }
 
     }
+
+    @Override
+    public void displayNotification(String notification) {
+
+    }
 }

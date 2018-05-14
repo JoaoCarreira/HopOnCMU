@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -9,6 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseQuestion;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
@@ -34,6 +38,7 @@ public class MainActivity extends AllActivity {
     Boolean save_quizz;
     Chronometer chronometer;
     int elapsedMillis;
+    WifiDirect wifi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,7 @@ public class MainActivity extends AllActivity {
         Bundle bundle = Mintent.getExtras();
         monument = bundle.getString("monumento");
 
+        wifi=LogInActivity.getWifi();
 
         score = (TextView) findViewById(R.id.score);
         score.setText("Score: " + mScore);
@@ -167,6 +173,7 @@ public class MainActivity extends AllActivity {
 
         }
         else{
+            wifi.sendInfo(resp);
             pergunta.setText(questions_receive.getQuestion(a));
             resposta1.setText(questions_receive.getChoice1(a));
             resposta2.setText(questions_receive.getChoice2(a));
@@ -229,6 +236,7 @@ public class MainActivity extends AllActivity {
         continuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 mydialog.dismiss();
                 updateQuestion(numeroRespostas);
             }
@@ -249,6 +257,7 @@ public class MainActivity extends AllActivity {
             public void onClick(View v) {
                 getVisible();
                 updateQuestion(numeroRespostas);
+                globalclass.setQuestions(questions_receive);
                 initdialog.dismiss();
                 chronometer.setBase(SystemClock.elapsedRealtime());
                 chronometer.start();
@@ -275,10 +284,16 @@ public class MainActivity extends AllActivity {
         }
 
         if (net.equals("update_score")) {
+            //enviar resultado para outro telemovel e ele faz o upload
             SendTask answers = new SendTask(MainActivity.this);
             answers.execute("update_score", "" + mScore, ""+ LogInActivity.getSession());
 
         }
+    }
+
+    @Override
+    public void displayNotification(String notification) {
+
     }
 
     @Override
@@ -298,6 +313,7 @@ public class MainActivity extends AllActivity {
         resposta3.setVisibility(Button.VISIBLE);
         resposta4.setVisibility(Button.VISIBLE);
     }
+
 
 }
 
