@@ -158,7 +158,7 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
     }
 
     @Override
-    public void displayNotification(String notification) {
+    public void actionToDO(String aux, String notification) {
 
     }
 

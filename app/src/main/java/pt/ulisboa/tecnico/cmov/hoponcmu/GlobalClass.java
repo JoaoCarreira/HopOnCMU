@@ -5,6 +5,7 @@ import android.app.Application;
 import java.util.ArrayList;
 
 public class GlobalClass extends Application{
+    private String user_name;
     private String monumento;
     private Questions questions;
     private int rank;
@@ -12,6 +13,14 @@ public class GlobalClass extends Application{
     private ArrayList<String> quizz_answer= new ArrayList<>();
 
     private Boolean state_quizz=false;
+
+    public String getUserName(){
+        return user_name;
+    }
+
+    public void setUserName(String name){
+        user_name=name;
+    }
 
     public Questions getQuestions(){
         return questions;

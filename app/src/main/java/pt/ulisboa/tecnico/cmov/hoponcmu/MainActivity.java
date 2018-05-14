@@ -2,7 +2,6 @@ package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -10,9 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseQuestion;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
@@ -25,7 +21,7 @@ public class MainActivity extends AllActivity {
 
     private Questions questions_receive;
     private String mAnswer;
-    private int mScore = 0;
+    private float mScore = 0;
     int numeroPerguntas= 4;
     int numeroRespostas= 0;
     Dialog mydialog;
@@ -37,7 +33,7 @@ public class MainActivity extends AllActivity {
     GlobalClass globalclass;
     Boolean save_quizz;
     Chronometer chronometer;
-    int elapsedMillis;
+    float elapsedMillis;
     WifiDirect wifi;
 
     @Override
@@ -50,7 +46,7 @@ public class MainActivity extends AllActivity {
         monument = bundle.getString("monumento");
 
         wifi=LogInActivity.getWifi();
-
+        globalclass= (GlobalClass) getApplicationContext();
         score = (TextView) findViewById(R.id.score);
         score.setText("Score: " + mScore);
 
@@ -63,7 +59,6 @@ public class MainActivity extends AllActivity {
 
         chronometer = (Chronometer) findViewById(R.id.chronometer);
 
-        globalclass= (GlobalClass) getApplicationContext();
         globalclass.setMonumento(monument);
         save_quizz=globalclass.getState();
 
@@ -160,20 +155,24 @@ public class MainActivity extends AllActivity {
     private void updateQuestion(int a) {
 
         if (a==numeroPerguntas){
-
+            wifi.sendInfo("info",globalclass.getUserName()+": "+resp);
             globalclass.setState(false);
             globalclass.quizzAnswer(monument);
+            int certas=(int) mScore;
+            int score= (int) ((mScore*100000)/elapsedMillis);
+            Log.d("Ver isto",""+score);
             SendTask answers = new SendTask(MainActivity.this);
-            answers.execute("update_score",""+ LogInActivity.getSession(),""+mScore,""+mScore);
-            globalclass.setRank(mScore);
-            globalclass.setScore(mScore);
+            answers.execute("update_score",""+ LogInActivity.getSession(),""+score,""+certas);
+            globalclass.setRank(score);
+            globalclass.setScore(certas);
 
             final Intent intent = new Intent(this,ListActivity.class);
             startActivity(intent);
 
         }
+        
         else{
-            wifi.sendInfo(resp);
+            wifi.sendInfo("info",globalclass.getUserName()+": "+resp);
             pergunta.setText(questions_receive.getQuestion(a));
             resposta1.setText(questions_receive.getChoice1(a));
             resposta2.setText(questions_receive.getChoice2(a));
@@ -192,7 +191,7 @@ public class MainActivity extends AllActivity {
 
         if(numeroRespostas==numeroPerguntas){
             chronometer.stop();
-            elapsedMillis = (int) (SystemClock.elapsedRealtime() - chronometer.getBase());
+            elapsedMillis = (float) (SystemClock.elapsedRealtime() - chronometer.getBase());
             Log.d("cronometro",""+elapsedMillis);
         }
 
@@ -285,14 +284,14 @@ public class MainActivity extends AllActivity {
 
         if (net.equals("update_score")) {
             //enviar resultado para outro telemovel e ele faz o upload
-            SendTask answers = new SendTask(MainActivity.this);
-            answers.execute("update_score", "" + mScore, ""+ LogInActivity.getSession());
+            String enviar="update_score,"+""+LogInActivity.getSession()+","+mScore+","+mScore;
+            wifi.sendInfo("servidor",enviar);
 
         }
     }
 
     @Override
-    public void displayNotification(String notification) {
+    public void actionToDO(String aux, String notification) {
 
     }
 

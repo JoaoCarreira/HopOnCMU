@@ -82,7 +82,7 @@ public class RegisterActivity extends AllActivity {
     }
 
     @Override
-    public void displayNotification(String notification) {
+    public void actionToDO(String aux, String notification) {
 
     }
 }

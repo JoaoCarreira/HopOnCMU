@@ -36,6 +36,8 @@ public class CommandHandlerImpl implements CommandHandler {
 		
 		ArrayList<String> recebido = hc.getMessage();
 		
+		System.out.println(recebido);
+		
 		if(recebido.get(0).equals(login)){
 			recebido.remove(0);
 			login(recebido);

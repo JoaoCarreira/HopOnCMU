@@ -105,9 +105,19 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
     }
 
     @Override
-    public void displayNotification(String text){
-        Intent intent = new Intent(this, ListActivity.class);
-        PendingIntent notificationPendingIntent = PendingIntent.getActivity(this ,0, intent ,0);
+    public void actionToDO(String aux, String text){
+        if(aux.equals("info")){
+           notification(text);
+        }
+        else if (aux.equals("servidor")){
+            SendTask answers = new SendTask(ListActivity.this);
+            String[] text_aux=text.split(",");
+            Log.d("Ver isto", String.valueOf(text_aux));
+            answers.execute(text_aux[0],text_aux[1],text_aux[2],text_aux[3]);
+        }
+    }
+
+    public void notification(String text){
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"123");
         builder.setContentTitle("HopOnCMU")
                 .setContentText(text)

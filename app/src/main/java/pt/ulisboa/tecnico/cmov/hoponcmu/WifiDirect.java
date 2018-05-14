@@ -1,11 +1,9 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 
-import android.app.AlertDialog;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -18,7 +16,6 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
@@ -49,7 +46,7 @@ public class WifiDirect implements SimWifiP2pManager.PeerListListener, SimWifiP2
     AllActivity rec;
     Application application;
     Intent intent;
-    private ArrayList<String> peersGroup= new ArrayList<>();;
+    private ArrayList<String> peersGroup= new ArrayList<>();
 
     public WifiDirect(Context i, AllActivity a, Application b){
         app=i;
@@ -178,7 +175,7 @@ public class WifiDirect implements SimWifiP2pManager.PeerListListener, SimWifiP2
         @Override
         protected void onProgressUpdate(String... values) {
             Toast.makeText(rec, values[0], Toast.LENGTH_SHORT).show();
-            rec.displayNotification(values[0]);
+            rec.actionToDO(values[0],values[1]);
         }
     }
 
@@ -236,14 +233,14 @@ public class WifiDirect implements SimWifiP2pManager.PeerListListener, SimWifiP2
         }
     }
 
-    public void sendInfo(String resp){
+    public void sendInfo(String why,String resp){
 
         WifiDirect wifi=LogInActivity.getWifi();
         ArrayList<String> group=wifi.getGroup();
 
         for (int i=0;i<group.size();i++) {
             new OutgoingCommTask().executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR,group.get(i),resp);
+                    AsyncTask.THREAD_POOL_EXECUTOR,group.get(i),why,resp);
         }
     }
 

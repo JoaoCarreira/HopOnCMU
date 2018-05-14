@@ -10,5 +10,5 @@ public abstract class AllActivity extends AppCompatActivity{
 
     public abstract void updateConnection(String activ);
 
-    public abstract void displayNotification(String notification);
+    public abstract void actionToDO(String aux, String notification);
 }
