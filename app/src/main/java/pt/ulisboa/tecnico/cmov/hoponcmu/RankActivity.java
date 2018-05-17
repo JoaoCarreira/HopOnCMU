@@ -185,6 +185,7 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
                 .setSmallIcon(R.drawable.logo2)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.logo2))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setVibrate(new long[]{0,300,300,300})
                 .setAutoCancel(true)
                 .build();
         NotificationManager notificationManager =(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
