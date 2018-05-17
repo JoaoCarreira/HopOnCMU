@@ -1,22 +1,26 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import android.app.Application;
-import android.hardware.camera2.CaptureResult;
 
-import java.security.KeyPair;
-import java.security.PublicKey;
+import java.util.ArrayList;
 
 public class GlobalClass extends Application{
+    private String user_name;
     private String monumento;
     private Questions questions;
     private int rank;
     private int score;
-    private KeyPair chaves;
-    private PublicKey keyServer;
-
-
+    private ArrayList<String> quizz_answer= new ArrayList<>();
 
     private Boolean state_quizz=false;
+
+    public String getUserName(){
+        return user_name;
+    }
+
+    public void setUserName(String name){
+        user_name=name;
+    }
 
     public Questions getQuestions(){
         return questions;
@@ -57,19 +61,12 @@ public class GlobalClass extends Application{
     public void setScore(int score){
         this.score=score;
     }
-    public KeyPair getKeypair(){
-        return chaves;
+
+    public void quizzAnswer(String monumento){
+        quizz_answer.add(monumento);
     }
 
-    public void setKeypair(KeyPair chaves){
-        this.chaves=chaves;
-    }
-
-    public PublicKey getKeyServer(){
-        return keyServer;
-    }
-
-    public void setKeyServer(PublicKey key){
-        this.keyServer=key;
+    public ArrayList<String> getQuizz_answer(){
+        return quizz_answer;
     }
 }

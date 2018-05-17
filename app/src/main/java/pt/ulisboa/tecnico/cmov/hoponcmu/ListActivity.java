@@ -28,6 +28,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
@@ -56,9 +57,9 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
 
         globalclass= (GlobalClass) getApplicationContext();
         monumento = globalclass.getMonumento();
-
+        notification("333333");
         wifiDirect=LogInActivity.getWifi();
-        wifiDirect.receiveInfo();
+        wifiDirect.receiveInfo(this);
 
         final ListView lista = (ListView)findViewById(R.id.lista);
         final CustomAdapter customAdapter = new CustomAdapter();
@@ -110,10 +111,9 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
            notification(text);
         }
         else if (aux.equals("servidor")){
-            SendTask answers = new SendTask(ListActivity.this);
+            SendTask answers_other = new SendTask(ListActivity.this);
             String[] text_aux=text.split(",");
-            Log.d("Ver isto", String.valueOf(text_aux));
-            answers.execute(text_aux[0],text_aux[1],text_aux[2],text_aux[3]);
+            answers_other.execute(text_aux[0],text_aux[1],text_aux[2],text_aux[3]);
         }
     }
 
@@ -128,7 +128,8 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
                 .build();
         NotificationManager notificationManager =(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager != null) {
-            notificationManager.notify(0, builder.build());
+            int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+            notificationManager.notify(m, builder.build());
         }
     }
 

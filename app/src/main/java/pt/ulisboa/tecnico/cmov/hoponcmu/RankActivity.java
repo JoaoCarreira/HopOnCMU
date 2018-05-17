@@ -1,10 +1,12 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.NotificationCompat;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseRank;
@@ -27,13 +30,15 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
     private ArrayList<String> users =new ArrayList<String>();
     private ArrayList<String> scores =new ArrayList<String>();
     private ArrayList<String> correct =new ArrayList<String>();
-    WifiDirect wifi;
+    WifiDirect wifiDirect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rank);
-        wifi = LogInActivity.getWifi();
+
+        wifiDirect=LogInActivity.getWifi();
+        wifiDirect.receiveInfo(this);
 
         bottomNavigationView=(BottomNavigationView) findViewById(R.id.navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
@@ -60,7 +65,7 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
                 break;
             case R.id.logout:
                 logoutMethod();
-                wifi.Wifi_Off();
+                wifiDirect.Wifi_Off();
                 startActivity(logoutIntent);
                 break;
         }
@@ -94,7 +99,6 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
             TextView textView_rightAnswers = (TextView)view.findViewById(R.id.RightAnswere);
 
             int lugar = position+1;
-            Log.d("posiçao",""+position);
             textView_score.setText(scores.get(position));
             textView_user.setText(users.get(position));
             textView_rank.setText((""+ lugar));
@@ -146,7 +150,6 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
     public void updateConnection(String net) {
 
         if (net.equals("get_rank")){
-            //enviar pedido para outro telemovel
             ListView lista = (ListView)findViewById(R.id.lista);
             CustomAdapter customAdapter = new CustomAdapter();
             lista.setAdapter(customAdapter);
@@ -158,13 +161,36 @@ public class RankActivity extends AllActivity implements BottomNavigationView.On
     }
 
     @Override
-    public void actionToDO(String aux, String notification) {
-
+    public void actionToDO(String aux, String text) {
+        if(aux.equals("info")){
+            notification(text);
+        }
+        else if (aux.equals("servidor")){
+            SendTask answers_other = new SendTask(RankActivity.this);
+            String[] text_aux=text.split(",");
+            answers_other.execute(text_aux[0],text_aux[1],text_aux[2],text_aux[3]);
+        }
     }
 
     public void logoutMethod(){
         int session_log=LogInActivity.getSession();
         SendTask task= new SendTask(RankActivity.this);
         task.execute("logout",""+session_log);
+    }
+
+    public void notification(String text){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"123");
+        builder.setContentTitle("HopOnCMU")
+                .setContentText(text)
+                .setSmallIcon(R.drawable.logo2)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.logo2))
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setAutoCancel(true)
+                .build();
+        NotificationManager notificationManager =(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+            notificationManager.notify(m, builder.build());
+        }
     }
 }

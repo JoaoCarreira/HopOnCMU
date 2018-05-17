@@ -1,14 +1,19 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
+
+import java.util.Date;
 
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseQuestion;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
@@ -48,7 +53,7 @@ public class MainActivity extends AllActivity {
         wifi=LogInActivity.getWifi();
         globalclass= (GlobalClass) getApplicationContext();
         score = (TextView) findViewById(R.id.score);
-        score.setText("Score: " + mScore);
+        score.setText("Right Answers " + mScore);
 
         resposta1 = (Button)findViewById(R.id.resposta1);
         resposta2 = (Button)findViewById(R.id.resposta2);
@@ -160,7 +165,6 @@ public class MainActivity extends AllActivity {
             globalclass.quizzAnswer(monument);
             int certas=(int) mScore;
             int score= (int) ((mScore*100000)/elapsedMillis);
-            Log.d("Ver isto",""+score);
             SendTask answers = new SendTask(MainActivity.this);
             answers.execute("update_score",""+ LogInActivity.getSession(),""+score,""+certas);
             globalclass.setRank(score);
@@ -170,7 +174,7 @@ public class MainActivity extends AllActivity {
             startActivity(intent);
 
         }
-        
+
         else{
             wifi.sendInfo("info",globalclass.getUserName()+": "+resp);
             pergunta.setText(questions_receive.getQuestion(a));
@@ -203,7 +207,7 @@ public class MainActivity extends AllActivity {
         if (already_answer.equals(false)) {
             if (fin == true) {
                 mScore ++ ;
-                score.setText("Score: " + mScore);
+                score.setText("Right Answers: " + mScore);
                 points = "+ 1 Ponto";
                 resp = "Resposta Correta";
                 mydialog.getWindow().setBackgroundDrawableResource(R.color.Green);
@@ -291,8 +295,31 @@ public class MainActivity extends AllActivity {
     }
 
     @Override
-    public void actionToDO(String aux, String notification) {
+    public void actionToDO(String aux, String text){
+        if(aux.equals("info")){
+            notification(text);
+        }
+        else if (aux.equals("servidor")){
+            SendTask answers_other = new SendTask(MainActivity.this);
+            String[] text_aux=text.split(",");
+            answers_other.execute(text_aux[0],text_aux[1],text_aux[2],text_aux[3]);
+        }
+    }
 
+    public void notification(String text){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"123");
+        builder.setContentTitle("HopOnCMU")
+                .setContentText(text)
+                .setSmallIcon(R.drawable.logo2)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.logo2))
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setAutoCancel(true)
+                .build();
+        NotificationManager notificationManager =(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+            notificationManager.notify(m, builder.build());
+        }
     }
 
     @Override

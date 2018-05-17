@@ -44,6 +44,7 @@ public class WifiDirect implements SimWifiP2pManager.PeerListListener, SimWifiP2
     StringBuilder peersStr = new StringBuilder();
     Context app=null;
     AllActivity rec;
+    AllActivity receiver;
     Application application;
     Intent intent;
     private ArrayList<String> peersGroup= new ArrayList<>();
@@ -174,8 +175,11 @@ public class WifiDirect implements SimWifiP2pManager.PeerListListener, SimWifiP2
 
         @Override
         protected void onProgressUpdate(String... values) {
-            Toast.makeText(rec, values[0], Toast.LENGTH_SHORT).show();
-            rec.actionToDO(values[0],values[1]);
+            String[] aux=values[0].split(",");
+            String action=aux[0];
+            String message=aux[1];
+            Toast.makeText(rec,message, Toast.LENGTH_SHORT).show();
+            receiver.actionToDO(action,message);
         }
     }
 
@@ -215,6 +219,7 @@ public class WifiDirect implements SimWifiP2pManager.PeerListListener, SimWifiP2
         @Override
         protected Void doInBackground(String... msg) {
             try {
+
                 mCliSocket.getOutputStream().write((msg[0] + "\n").getBytes());
                 BufferedReader sockIn = new BufferedReader(
                         new InputStreamReader(mCliSocket.getInputStream()));
@@ -240,11 +245,12 @@ public class WifiDirect implements SimWifiP2pManager.PeerListListener, SimWifiP2
 
         for (int i=0;i<group.size();i++) {
             new OutgoingCommTask().executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR,group.get(i),why,resp);
+                    AsyncTask.THREAD_POOL_EXECUTOR,group.get(i),why+","+resp);
         }
     }
 
-    public void receiveInfo(){
+    public void receiveInfo(AllActivity aux){
+        receiver=aux;
         if (mSrvSocket==null) {
             new IncommingCommTask().executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR);
