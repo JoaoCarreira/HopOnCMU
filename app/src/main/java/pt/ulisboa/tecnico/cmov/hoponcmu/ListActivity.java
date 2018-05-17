@@ -57,7 +57,6 @@ public class ListActivity extends AllActivity implements BottomNavigationView.On
 
         globalclass= (GlobalClass) getApplicationContext();
         monumento = globalclass.getMonumento();
-        notification("333333");
         wifiDirect=LogInActivity.getWifi();
         wifiDirect.receiveInfo(this);
 
