@@ -6,7 +6,9 @@
     android:layout_width="350dp"
     android:layout_height="350dp"
     android:layout_gravity="center"
-    android:padding="5dp">
+    android:padding="5dp"
+    android:background="@drawable/back">
+
 
     <TextView
         android:id="@+id/textView4"
@@ -14,7 +16,7 @@
         android:layout_height="54dp"
         android:layout_marginTop="70dp"
         android:text="Answer now or later?"
-        android:textColor="@color/Green"
+        android:textColor="@color/white"
         android:textSize="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,22 +24,26 @@
 
     <Button
         android:id="@+id/now_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
-        android:layout_marginStart="50dp"
+        android:layout_width="136dp"
+        android:layout_height="89dp"
+        android:layout_marginBottom="56dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp"
         android:text="Now"
+        android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/later_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
-        android:layout_marginEnd="50dp"
+        android:layout_width="131dp"
+        android:layout_height="88dp"
+        android:layout_marginBottom="56dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
         android:layout_marginStart="64dp"
         android:text="Later"
+        android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/continue_button" />
