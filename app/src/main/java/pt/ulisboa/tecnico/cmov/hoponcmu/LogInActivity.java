@@ -1,11 +1,22 @@
 package pt.ulisboa.tecnico.cmov.hoponcmu;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.HelloResponseLogin;
 import pt.ulisboa.tecnico.cmov.hoponcmu.response.Response;
@@ -22,7 +33,11 @@ public class LogInActivity extends AllActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
-
+        try {
+            globalClass.setKeyServer(getKeyServer(this.getApplicationContext()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,5 +128,36 @@ public class LogInActivity extends AllActivity {
 
     public static WifiDirect getWifi(){
         return wifi_aux;
+    }
+
+    public PublicKey getKeyServer(Context context) throws Exception {
+        // reads the public key stored in a file
+        InputStream is = context.getResources().openRawResource(R.raw.publickey);
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        List<String> lines = new ArrayList<String>();
+        String line = null;
+        while ((line = br.readLine()) != null)
+            lines.add(line);
+
+        // removes the first and last lines of the file (comments)
+        if (lines.size() > 1 && lines.get(0).startsWith("-----") && lines.get(lines.size()-1).startsWith("-----")) {
+            lines.remove(0);
+            lines.remove(lines.size()-1);
+        }
+
+        // concats the remaining lines to a single String
+        StringBuilder sb = new StringBuilder();
+        for (String aLine: lines)
+            sb.append(aLine);
+        String keyString = sb.toString();
+        Log.d("log", "keyString:"+keyString);
+
+        // converts the String to a PublicKey instance
+        byte[] keyBytes = Base64.decode(keyString,Base64.DEFAULT);
+        X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PublicKey key = keyFactory.generatePublic(spec);
+        return key;
+
     }
 }
