@@ -53,7 +53,7 @@ public class MainActivity extends AllActivity {
         wifi=LogInActivity.getWifi();
         globalclass= (GlobalClass) getApplicationContext();
         score = (TextView) findViewById(R.id.score);
-        score.setText("Right Answers " + mScore);
+        score.setText("Right Answers " + (int)mScore);
 
         resposta1 = (Button)findViewById(R.id.resposta1);
         resposta2 = (Button)findViewById(R.id.resposta2);
@@ -177,7 +177,7 @@ public class MainActivity extends AllActivity {
 
         else{
             wifi.sendInfo("info",globalclass.getUserName()+": "+resp);
-            pergunta.setText(questions_receive.getQuestion(a));
+            pergunta.setText(monument+"\n"+"\n"+questions_receive.getQuestion(a));
             resposta1.setText(questions_receive.getChoice1(a));
             resposta2.setText(questions_receive.getChoice2(a));
             resposta3.setText(questions_receive.getChoice3(a));
@@ -207,7 +207,7 @@ public class MainActivity extends AllActivity {
         if (already_answer.equals(false)) {
             if (fin == true) {
                 mScore ++ ;
-                score.setText("Right Answers: " + mScore);
+                score.setText("Right Answers: " + (int)mScore);
                 points = "+ 1 Ponto";
                 resp = "Resposta Correta";
                 mydialog.getWindow().setBackgroundDrawableResource(R.color.Green);
